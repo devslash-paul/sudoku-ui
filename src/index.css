@@ -11,3 +11,35 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.tile {
+  border: 1px solid black;
+}
+
+.tile:nth-child(3n):not(:nth-child(9n)) {
+  border-right: 2px solid black;
+}
+
+.tile:nth-child(n+19):nth-child(-n+27) {
+  border-bottom: 2px solid #000;
+}
+ 
+.tile:nth-child(n+46):nth-child(-n+54) {
+  border-bottom: 2px solid #000;
+}
+
+.smallContent {
+  font-size:13px;
+  height: 13px;
+  display:inline-block;
+  text-align: left;
+  line-height: 13px;
+}
+
+[tabindex] {
+  outline: none;
+}
+
+div {
+  user-select:none;
+}
