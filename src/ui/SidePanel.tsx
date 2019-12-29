@@ -1,9 +1,11 @@
 import React, { Dispatch } from "react";
+import pako from 'pako';
 import { useToasts } from "react-toast-notifications";
 import { connect } from "react-redux";
 import { AppState, CellState, Settings } from "../state/model";
 import { onNew, onSetHighlight, onImport } from "../state/sidebarActions";
 import { Actions } from "../state/cellActions";
+import { parse } from "path";
 
 type SidebarProps = {
   board: string;
@@ -23,7 +25,6 @@ const onImportClicked = (doImport: (e1: string) => void) => {
 };
 
 const doExport = (addToast: any, board: string) => {
-
   navigator.clipboard.writeText(board);
   addToast("URL copied to clipboard", { appearance: 'info' });
 };
@@ -71,10 +72,27 @@ const encodeFull = (cells: CellState[]) => {
   //       soln |= 0x1 << small;
   //     });
   //     return soln;
-  //   })
+  //   })jjj
   //   .forEach(x => input.push(x));
   // var out = pako.deflate(new Uint8Array(input), { to: "string" });
-  return Buffer.from(JSON.stringify(cells)).toString('base64')
+  // lets start by not supporting the large ones
+  // the largest number that i'm encoding is 1001
+  // therefore i can get 2 cells per byte
+  const nums = cells.map(x => {
+    if(x.mainNum == null) {
+      return 0;
+    }
+    return x.mainNum
+  }).map(x => x.toString(2).padStart(4, "0"))
+  .reduce((p,n) => p + n, "")
+  // const compressed = pako.deflate(nums)
+  // console.log("Compres")
+  const val = (BigInt("0b" + nums))
+  return val.toString(36);
+  // console.log(pako.inflate(compressed, { to: 'string'}))
+  // console.log(compressed)
+  // return btoa(compressed.toString())
+  // return Buffer.from(JSON.stringify(cells)).toString('base64')
 };
 
 const mapStateToProps = (appState: AppState) => {
