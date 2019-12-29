@@ -1,6 +1,12 @@
 import { AppState } from "./model";
-import { Actions, Direction, InsertSmallEvent } from "./cellActions";
-import { defaultState } from "./default";
+import {
+  Actions,
+  Direction,
+  InsertSmallEvent,
+  SidebarEvent
+} from "./cellActions";
+import { getInitialState } from "./default";
+import { SIDEBAR, NEW, HIGHLIGHT_CHANGE, IMPORT } from "./actionTypes";
 
 const blur = (state: AppState, index: number): AppState => {
   return {
@@ -39,7 +45,7 @@ const doMove = (state: AppState, direction: Direction) => {
 };
 
 export function AppReducer(
-  state: AppState = defaultState,
+  state: AppState = getInitialState(),
   action: Actions
 ): AppState {
   switch (action.type) {
@@ -90,23 +96,66 @@ export function AppReducer(
       return doMove(state, action.direction);
     case "CLICK_TEXT":
       return doClickText(state, action.number);
+    case SIDEBAR:
+      return doSidebar(state, action);
+    case HIGHLIGHT_CHANGE:
+      return doChangeHighlight(state, action.value);
+    case IMPORT:
+      return doImport(state, action.value);
     default:
       return state;
   }
 }
 
+function doImport(state: AppState, value: string): AppState {
+  let cells = new Array(81);
+  for(let i = 0; i < 81; i++) {
+    if(value.charAt(i) !== "0" && !isNaN(parseInt(value.charAt(i)))) {
+      cells[i] = {mainNum: parseInt(value.charAt(i)), small:[]}
+    } else {
+      cells[i] = {mainNum: null, small: []}
+    }
+  }
+  return {
+    ...state,
+    cells
+  }
+}
+
+function doChangeHighlight(state: AppState, value: boolean): AppState {
+  return {
+    ...state, 
+    settings: {
+      ...state.settings,
+      enableHighlight: value,
+    }
+  }
+}
+
+function doSidebar(state: AppState, action: SidebarEvent): AppState {
+  switch (action.subtype) {
+    case NEW:
+      const newCells = new Array(81).fill({mainNum: null, small: []});
+      return {
+        ...state,
+        cells: newCells,
+        selectedCell: [],
+        selectedNumbers: []
+      };
+  }
+}
 
 function doClickText(state: AppState, number: number) {
   let result;
-  if(state.selectedNumbers.indexOf(number) === -1) {
-    result = [...state.selectedNumbers, number]
+  if (state.selectedNumbers.indexOf(number) === -1) {
+    result = [...state.selectedNumbers, number];
   } else {
-    result = [...state.selectedNumbers.filter(x => x !== number)]
+    result = [...state.selectedNumbers.filter(x => x !== number)];
   }
   return {
     ...state,
     selectedNumbers: result
-  }
+  };
 }
 
 function doInsertSmall(state: AppState, action: InsertSmallEvent) {
@@ -120,10 +169,10 @@ function doInsertSmall(state: AppState, action: InsertSmallEvent) {
   state.selectedCell.forEach(x => {
     const index = cells[x].small.indexOf(action.number);
     if (adding && index === -1) {
-      cells[x].small = [...cells[x].small, action.number]
+      cells[x].small = [...cells[x].small, action.number];
     } else if (!adding && index !== -1) {
       cells[x].small = cells[x].small.filter((x, n) => n !== index);
     }
   });
-  return { ...state, cells};
+  return { ...state, cells };
 }

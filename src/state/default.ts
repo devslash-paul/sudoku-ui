@@ -1,6 +1,14 @@
 import { AppState } from "./model";
 
-export const defaultState: AppState = {
+export const getInitialState = () => {
+  const res =localStorage.getItem('state');
+  if (res != null) {
+    return JSON.parse(res);
+  }
+  return defaultState
+}
+
+const defaultState: AppState = {
   settings: {
     enableHighlight: false,
   },

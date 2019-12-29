@@ -8,3 +8,8 @@ export const BLUR_CELL = "BLUR_CELL";
 export const MOVE = "MOVE";
 
 export const CLICK_TEXT = "CLICK_TEXT";
+
+export const SIDEBAR = "SIDEBAR";
+export const NEW = "NEW";
+export const HIGHLIGHT_CHANGE = "HIGHLIGHT_CHANGE";
+export const IMPORT = "IMPORT";

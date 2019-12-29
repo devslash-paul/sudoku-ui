@@ -4,9 +4,13 @@ import {
   INSERT_SMALL,
   DELETE,
   DRAG_CELL,
+  SIDEBAR,
   BLUR_CELL,
   MOVE,
-  CLICK_TEXT
+  CLICK_TEXT,
+  NEW,
+  HIGHLIGHT_CHANGE,
+  IMPORT
 } from "./actionTypes";
 
 export type Actions =
@@ -17,9 +21,26 @@ export type Actions =
   | DragCellEvent
   | BlurEvent
   | MoveEvent
-  | ClickTextEvent;
+  | ClickTextEvent
+  | SidebarEvent
+  | HighlightChangeEvent
+  |ImportEvent;
 
 export type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT";
+
+export type ImportEvent = {
+  type: typeof IMPORT,
+  value: string
+}
+export type SidebarEvent = {
+  type: typeof SIDEBAR,
+  subtype: typeof NEW
+}
+
+export type HighlightChangeEvent = {
+  type: typeof HIGHLIGHT_CHANGE,
+  value: boolean
+}
 
 export type ClickTextEvent = {
   type: typeof CLICK_TEXT;
