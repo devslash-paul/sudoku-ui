@@ -1,6 +1,5 @@
-import React, { PureComponent, Dispatch } from "react";
+import React, { Dispatch } from "react";
 import { useToasts } from "react-toast-notifications";
-import pako from "pako";
 import { connect } from "react-redux";
 import { AppState, CellState, Settings } from "../state/model";
 import { onNew, onSetHighlight, onImport } from "../state/sidebarActions";

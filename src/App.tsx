@@ -1,6 +1,6 @@
 import React from "react";
 import "./App.css";
-import { ToastProvider, useToasts } from 'react-toast-notifications'
+import { ToastProvider } from 'react-toast-notifications'
 import { FilteredBoard } from "./ui/Board";
 import { store } from "./state/store";
 import { Provider } from "react-redux";
