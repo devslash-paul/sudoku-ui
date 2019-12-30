@@ -7,7 +7,7 @@ import { RESIZE_START, RESIZE_END } from "../state/actionTypes";
 
 type ResizePanelProps = {
   size: number;
-  children: JSX.Element;
+  children: Array<JSX.Element>;
   onDrag: (arg0: SyntheticEvent, data: ResizeCallbackData) => void;
   onDragStart: (arg0: SyntheticEvent, data: ResizeCallbackData) => void;
   onDragEnd: (arg0: SyntheticEvent, data: ResizeCallbackData) => void;
@@ -29,7 +29,7 @@ function ResizePanelUI(props: ResizePanelProps): JSX.Element {
   );
 }
 
-const mapStateToProps = ({main}:{main: AppState}) => {
+const mapStateToProps = (main: AppState) => {
   return {
     size: main.settings.boardSize
   };

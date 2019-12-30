@@ -16,9 +16,10 @@ import {
   RESIZE,
   RESIZE_START,
   RESIZE_END,
-  PAINT
+  PAINT,
+  BEGIN_PAINTING
 } from "./actionTypes";
-import { doPaint } from "./paint";
+import { paintReducer } from "./paint";
 
 const blur = (state: AppState, index: number): AppState => {
   return {
@@ -67,17 +68,25 @@ const validStateAction = (state: State, action: Actions) => {
         action.type === RESIZE_END ||
         action.type === RESIZE_START
       );
-    case State.PAINTING:
-      return false;
   }
+  return true;
 };
+
+function isPainting(state: AppState, action: Actions) {
+  return state.settings.state === State.PAINTING || action.type === PAINT;
+}
 
 export function AppReducer(
   state: AppState = getInitialState(),
   action: Actions
 ): AppState {
-  if (!validStateAction(state.settings.state, action)) {
+
+  if(!validStateAction(state.settings.state, action)) {
     return state;
+  }
+
+  if(isPainting(state, action)) {
+    return paintReducer(state, action);
   }
 
   switch (action.type) {
@@ -115,8 +124,6 @@ export function AppReducer(
       return doChangeHighlight(state, action.value);
     case IMPORT:
       return doImport(state, action.value);
-    case PAINT:
-      return doPaint(state, action);
     default:
       return state;
   }

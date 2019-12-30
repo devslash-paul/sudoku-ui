@@ -99,7 +99,7 @@ const encodeFull = (cells: CellState[]) => {
   return val.toString(36);
 };
 
-const mapStateToProps = ({main}: {main: AppState}) => {
+const mapStateToProps = (main: AppState) => {
   return {
     board: encodeBoard(main.cells),
     full: encodeFull(main.cells),

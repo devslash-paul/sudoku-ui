@@ -112,7 +112,7 @@ export class BoardUI extends Component<BoardProps> {
 }
 
 
-const mapStateToProps = ({main}: {main: AppState}) => {
+const mapStateToProps = (main: AppState) => {
   return {
     board: main.cells,
     selected: main.selectedCell,
