@@ -68,7 +68,7 @@ const validStateAction = (state: State, action: Actions) => {
         action.type === RESIZE_START
       );
     case State.PAINTING:
-      return true;
+      return false;
   }
 };
 
