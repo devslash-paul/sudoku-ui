@@ -12,7 +12,8 @@ const bodyStyle: CSS.Properties = {
 //   justifyContent: 'center'
 };
 
-const boardStyle ={
+const boardStyle: CSS.Properties  ={
+    position: 'relative',
     padding: "20px",
 }
 

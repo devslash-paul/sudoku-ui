@@ -6,12 +6,19 @@ import { store } from "./state/store";
 import { Provider } from "react-redux";
 import { ConnectedPanel } from "./ui/SidePanel";
 import { Skeleton } from "./ui/Skeleton";
+import { ResizePanel } from "./ui/ResizeablePanel";
+
 
 const App: React.FC = () => {
+
+  const Mainboard = <ResizePanel>
+    <FilteredBoard  />
+  </ResizePanel>
+
   return (
     <Provider store={store}>
       <ToastProvider>
-        <Skeleton board={<FilteredBoard />} side={<ConnectedPanel />} />
+        <Skeleton board={Mainboard} side={<ConnectedPanel />} />
       </ToastProvider>
     </Provider>
   );

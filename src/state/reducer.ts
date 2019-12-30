@@ -3,10 +3,20 @@ import {
   Actions,
   Direction,
   InsertSmallEvent,
-  SidebarEvent
+  SidebarEvent,
+  DeleteEvent,
+  ResizeEvent
 } from "./cellActions";
 import { getInitialState } from "./default";
-import { SIDEBAR, NEW, HIGHLIGHT_CHANGE, IMPORT } from "./actionTypes";
+import {
+  SIDEBAR,
+  NEW,
+  HIGHLIGHT_CHANGE,
+  IMPORT,
+  RESIZE,
+  RESIZE_START,
+  RESIZE_END
+} from "./actionTypes";
 
 const blur = (state: AppState, index: number): AppState => {
   return {
@@ -15,6 +25,14 @@ const blur = (state: AppState, index: number): AppState => {
     selectedNumbers: []
   };
 };
+
+function isUnfreezableFunction(action: Actions): action is ResizeEvent {
+  return (
+    action.type === "RESIZE" ||
+    action.type === RESIZE_START ||
+    action.type === RESIZE_END
+  );
+}
 
 const doMove = (state: AppState, direction: Direction) => {
   let selected = state.selectedCell;
@@ -48,38 +66,23 @@ export function AppReducer(
   state: AppState = getInitialState(),
   action: Actions
 ): AppState {
+  if (state.settings.frozen && !isUnfreezableFunction(action)) {
+    return state;
+  }
   switch (action.type) {
+    case RESIZE:
+    case RESIZE_START:
+    case RESIZE_END:
+      return doResize(state, action);
     case "SELECT_CELL":
       const value = action.index != null ? [action.index] : [];
       return { ...state, selectedCell: value };
     case "INSERT":
-      // only works with a single selection
-      if (state.selectedCell.length !== 1) {
-        return state;
-      }
-      const index = state.selectedCell[0];
-      const newCells = [...state.cells];
-      const n = newCells[index];
-      newCells[index] = { ...n, mainNum: action.number };
-      return { ...state, cells: newCells };
+      return doInsert(state, action.number);
     case "INSERT_SMALL":
       return doInsertSmall(state, action);
     case "DELETE":
-      if (state.selectedCell.length !== 1) {
-        return state;
-      }
-      let deleteCell = state.cells[state.selectedCell[0]];
-      let newDeleteCells = [...state.cells];
-      if (deleteCell.mainNum == null) {
-        deleteCell.small = [];
-      } else {
-        deleteCell.mainNum = null;
-      }
-      newDeleteCells[state.selectedCell[0]] = deleteCell;
-      return {
-        ...state,
-        cells: newDeleteCells
-      };
+      return doDelete(state, action);
     case "DRAG_CELL":
       let newSelection =
         state.selectedCell.indexOf(action.index) === -1
@@ -89,7 +92,6 @@ export function AppReducer(
         ...state,
         selectedCell: newSelection
       };
-
     case "BLUR_CELL":
       return blur(state, action.index);
     case "MOVE":
@@ -102,40 +104,73 @@ export function AppReducer(
       return doChangeHighlight(state, action.value);
     case IMPORT:
       return doImport(state, action.value);
+
     default:
       return state;
   }
 }
 
+function doResize(state: AppState, data: ResizeEvent): AppState {
+  if (data.type === RESIZE) {
+    return {
+      ...state,
+      settings: {
+        ...state.settings,
+        boardSize: data.size
+      }
+    };
+  }
+  const freeze = data.type === RESIZE_START;
+  return {
+    ...state,
+    settings: {
+      ...state.settings,
+      frozen: freeze
+    }
+  };
+}
+
+function doInsert(state: AppState, value: number): AppState {
+  // only works with a single selection
+  if (state.selectedCell.length !== 1) {
+    return state;
+  }
+  const index = state.selectedCell[0];
+  const newCells = [...state.cells];
+  const cell = newCells[index];
+  newCells[index] = { ...cell, mainNum: value };
+  return { ...state, cells: newCells };
+}
+
 function doImport(state: AppState, value: string): AppState {
   let cells = new Array(81);
-  for(let i = 0; i < 81; i++) {
-    if(value.charAt(i) !== "0" && !isNaN(parseInt(value.charAt(i)))) {
-      cells[i] = {mainNum: parseInt(value.charAt(i)), small:[]}
+  for (let i = 0; i < 81; i++) {
+    if (value.charAt(i) !== "0" && !isNaN(parseInt(value.charAt(i)))) {
+      cells[i] = { mainNum: parseInt(value.charAt(i)), small: [] };
     } else {
-      cells[i] = {mainNum: null, small: []}
+      cells[i] = { mainNum: null, small: [] };
     }
   }
   return {
     ...state,
     cells
-  }
+  };
 }
 
 function doChangeHighlight(state: AppState, value: boolean): AppState {
   return {
-    ...state, 
+    ...state,
     settings: {
       ...state.settings,
-      enableHighlight: value,
+      enableHighlight: value
     }
-  }
+  };
 }
 
 function doSidebar(state: AppState, action: SidebarEvent): AppState {
   switch (action.subtype) {
     case NEW:
-      const newCells = new Array(81).fill({mainNum: null, small: []});
+      const newCells = new Array(81).fill({ mainNum: null, small: [] });
       return {
         ...state,
         cells: newCells,
@@ -175,4 +210,30 @@ function doInsertSmall(state: AppState, action: InsertSmallEvent) {
     }
   });
   return { ...state, cells };
+}
+
+function doDelete(state: AppState, action: DeleteEvent) {
+  if (state.selectedCell.length !== 1) {
+    return state;
+  }
+  const index = state.selectedCell[0];
+  let deleteCell = state.cells[index];
+  const newDeleteCells = [...state.cells];
+
+  if (deleteCell.mainNum == null) {
+    deleteCell = {
+      ...deleteCell,
+      small: []
+    };
+  } else {
+    deleteCell = {
+      ...deleteCell,
+      mainNum: null
+    };
+  }
+  newDeleteCells[index] = deleteCell;
+  return {
+    ...state,
+    cells: newDeleteCells
+  };
 }

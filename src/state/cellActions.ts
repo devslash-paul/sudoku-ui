@@ -10,7 +10,10 @@ import {
   CLICK_TEXT,
   NEW,
   HIGHLIGHT_CHANGE,
-  IMPORT
+  IMPORT,
+  RESIZE,
+  RESIZE_START,
+  RESIZE_END
 } from "./actionTypes";
 
 export type Actions =
@@ -20,27 +23,28 @@ export type Actions =
   | DeleteEvent
   | DragCellEvent
   | BlurEvent
+  | ResizeEvent
   | MoveEvent
   | ClickTextEvent
   | SidebarEvent
   | HighlightChangeEvent
-  |ImportEvent;
+  | ImportEvent;
 
 export type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT";
 
 export type ImportEvent = {
-  type: typeof IMPORT,
-  value: string
-}
+  type: typeof IMPORT;
+  value: string;
+};
 export type SidebarEvent = {
-  type: typeof SIDEBAR,
-  subtype: typeof NEW
-}
+  type: typeof SIDEBAR;
+  subtype: typeof NEW;
+};
 
 export type HighlightChangeEvent = {
-  type: typeof HIGHLIGHT_CHANGE,
-  value: boolean
-}
+  type: typeof HIGHLIGHT_CHANGE;
+  value: boolean;
+};
 
 export type ClickTextEvent = {
   type: typeof CLICK_TEXT;
@@ -77,6 +81,19 @@ export type DeleteEvent = {
   type: typeof DELETE;
   index: number;
 };
+export type ResizeEvent = {
+  type: typeof RESIZE
+  size: number;
+} | {
+  type: typeof RESIZE_START | typeof RESIZE_END
+};
+
+export function resize(size: number): ResizeEvent {
+  return {
+    type: RESIZE,
+    size
+  };
+}
 
 export function selectCell(index: number | null): SelectEvent {
   return {

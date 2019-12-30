@@ -43,13 +43,7 @@ code {
   border-bottom: 2px solid #000;
 }
 
-.smallContent {
-  font-size:13px;
-  height: 13px;
-  display:inline-block;
-  text-align: left;
-  line-height: 13px;
-}
+
 
 [tabindex] {
   outline: none;

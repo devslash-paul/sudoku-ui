@@ -4,7 +4,9 @@ export type CellState = {
 }
 
 export type Settings = {
-    enableHighlight: boolean
+    frozen: boolean,
+    enableHighlight: boolean,
+    boardSize: number
 }
 
 export type AppState = {

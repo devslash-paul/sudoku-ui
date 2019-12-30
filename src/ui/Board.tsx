@@ -18,16 +18,11 @@ import {
 import { connect } from "react-redux";
 import { Cell } from "./Cell";
 
-const rowStyle = {
-  display: "flex",
-  flexFlow: "row wrap",
-  width: "450px"
-};
-
 type BoardProps = {
   board: Array<CellState>;
   selected: Array<number>;
   numbers: Array<number>;
+  size: number,
   onClick: (argo0: number | null) => void;
   onEnterNum: (num: number) => void;
   onEnterSmallNum: (index: number, num: number) => void;
@@ -38,30 +33,45 @@ type BoardProps = {
   onClickText: (number: number) => void;
 };
 
-class BoardUI extends Component<BoardProps> {
+export class BoardUI extends Component<BoardProps> {
   render() {
+    const rowStyle = {
+      display: "flex",
+      flexFlow: "row wrap",
+      width: `${this.props.size}px`,
+      lineHeight: `${this.props.size}px`
+    }
     const board = this.props.board;
     let cells = board.map((cell, number) => {
       const onClick = () => this.props.onClick(number);
       const onDrag = () => this.props.onDrag(number);
       const onBlur = () => this.props.onBlur(number);
       const onInput = (val: number, isMeta: boolean) => {
-        const key = String.fromCharCode(val)
+        let key = String.fromCharCode(val)
         if (isNaN(parseInt(key))) {
           // check if it's backspace
-          if(val === 8) {
+          if(val === 8 || val === 46) {
             this.props.onDelete(number)
+            return;
           }
           else if (val === 38) {
             this.props.onMove("UP")
+            return;
           } else if(val === 37) {
             this.props.onMove("LEFT")
+            return;
           } else if(val === 40) {
             this.props.onMove("DOWN")
+            return;
           } else if(val === 39) {
             this.props.onMove("RIGHT")
+            return;
+          } else if( val >= 97 && val <= 105) {
+            //todo: fix up this return nightmare
+            key = String.fromCharCode(val - 48)
+          } else {
+            return;
           }
-          return;
         }
         if (!isMeta) {
           this.props.onEnterNum(parseInt(key));
@@ -74,6 +84,7 @@ class BoardUI extends Component<BoardProps> {
           key={number}
           number={cell.mainNum}
           small={cell.small}
+          size={this.props.size/9}
           highlight={this.props.numbers}
           selected={this.props.selected.indexOf(number) !== -1}
           focused={
@@ -100,11 +111,13 @@ class BoardUI extends Component<BoardProps> {
   }
 }
 
+
 const mapStateToProps = (state: AppState) => {
   return {
     board: state.cells,
     selected: state.selectedCell,
-    numbers: state.settings.enableHighlight ? state.selectedNumbers : []
+    numbers: state.settings.enableHighlight ? state.selectedNumbers : [],
+    size: state.settings.boardSize,
   };
 };
 

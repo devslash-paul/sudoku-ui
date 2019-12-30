@@ -13,3 +13,7 @@ export const SIDEBAR = "SIDEBAR";
 export const NEW = "NEW";
 export const HIGHLIGHT_CHANGE = "HIGHLIGHT_CHANGE";
 export const IMPORT = "IMPORT";
+
+export const RESIZE = "RESIZE";
+export const RESIZE_START = "RESIZE_START";
+export const RESIZE_END = "RESIZE_END";

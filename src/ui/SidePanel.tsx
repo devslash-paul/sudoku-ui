@@ -6,11 +6,13 @@ import { AppState, CellState, Settings } from "../state/model";
 import { onNew, onSetHighlight, onImport } from "../state/sidebarActions";
 import { Actions } from "../state/cellActions";
 import { parse } from "path";
+import { BoardUI } from "./Board";
 
 type SidebarProps = {
   board: string;
   settings: Settings;
   full: string;
+  boardCells: Array<CellState>;
 
   onNew: () => void;
   onChangeHighlight: (e1: boolean) => void;
@@ -30,6 +32,7 @@ const doExport = (addToast: any, board: string) => {
 };
 const Sidebar = (props: SidebarProps) => {
   const { addToast } = useToasts();
+  const vfun = (e: any) => {}
 
   return (
     <div>
@@ -44,6 +47,19 @@ const Sidebar = (props: SidebarProps) => {
         type="checkbox"
         checked={props.settings.enableHighlight}
         onChange={e => props.onChangeHighlight(e.target.checked)}
+      />
+      <h5>Saved Boards</h5>
+      <button>Save</button>
+      <BoardUI board={props.boardCells} selected={[]}
+      numbers={[]} size={200}
+      onClick={vfun}
+      onEnterNum={vfun}
+      onEnterSmallNum={vfun}
+      onDelete={vfun}
+      onBlur={vfun}
+      onMove={vfun}
+      onClickText={vfun}
+      onDrag={vfun}
       />
       <h5>External resources</h5>
       <a
@@ -99,7 +115,8 @@ const mapStateToProps = (appState: AppState) => {
   return {
     board: encodeBoard(appState.cells),
     full: encodeFull(appState.cells),
-    settings: appState.settings
+    settings: appState.settings,
+    boardCells: appState.cells,
   };
 };
 

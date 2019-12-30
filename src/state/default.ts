@@ -5,12 +5,20 @@ export const getInitialState = () => {
   if (res != null) {
     return JSON.parse(res);
   }
-  return defaultState
+  return {
+    ...defaultState,
+    settings: {
+      ...defaultState.settings,
+      frozen: false // you can never load a frozen state
+    }
+  }
 }
 
 const defaultState: AppState = {
   settings: {
+    frozen: false,
     enableHighlight: false,
+    boardSize: 450,
   },
   selectedNumbers: [],
   cells: [
