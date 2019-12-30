@@ -13,7 +13,10 @@ import {
   IMPORT,
   RESIZE,
   RESIZE_START,
-  RESIZE_END
+  PAINT,
+  RESIZE_END,
+  BEGIN_PAINTING,
+  END_PAINTING
 } from "./actionTypes";
 
 export type Actions =
@@ -28,10 +31,15 @@ export type Actions =
   | ClickTextEvent
   | SidebarEvent
   | HighlightChangeEvent
-  | ImportEvent;
+  | ImportEvent
+  | PaintEvent;
 
 export type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT";
 
+export type PaintEvent = {
+  type: typeof PAINT,
+  subtype: typeof BEGIN_PAINTING | typeof END_PAINTING
+}
 export type ImportEvent = {
   type: typeof IMPORT;
   value: string;

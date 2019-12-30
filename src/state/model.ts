@@ -3,8 +3,14 @@ export type CellState = {
     small: Array<number>
 }
 
+export enum State {
+    NORMAL=1,
+    FROZEN=2,
+    PAINTING=3
+}
+
 export type Settings = {
-    frozen: boolean,
+    state: State,
     enableHighlight: boolean,
     boardSize: number
 }

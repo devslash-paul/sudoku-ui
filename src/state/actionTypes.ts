@@ -17,3 +17,7 @@ export const IMPORT = "IMPORT";
 export const RESIZE = "RESIZE";
 export const RESIZE_START = "RESIZE_START";
 export const RESIZE_END = "RESIZE_END";
+
+export const PAINT = "PAINT"
+export const BEGIN_PAINTING = "BEGIN_PAINING"
+export const END_PAINTING = "END_PAINING"

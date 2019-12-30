@@ -29,9 +29,9 @@ function ResizePanelUI(props: ResizePanelProps): JSX.Element {
   );
 }
 
-const mapStateToProps = (state: AppState) => {
+const mapStateToProps = ({main}:{main: AppState}) => {
   return {
-    size: state.settings.boardSize
+    size: main.settings.boardSize
   };
 };
 

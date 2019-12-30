@@ -1,4 +1,4 @@
-import { AppState } from "./model";
+import { AppState, State } from "./model";
 import {
   Actions,
   Direction,
@@ -15,8 +15,10 @@ import {
   IMPORT,
   RESIZE,
   RESIZE_START,
-  RESIZE_END
+  RESIZE_END,
+  PAINT
 } from "./actionTypes";
+import { doPaint } from "./paint";
 
 const blur = (state: AppState, index: number): AppState => {
   return {
@@ -25,14 +27,6 @@ const blur = (state: AppState, index: number): AppState => {
     selectedNumbers: []
   };
 };
-
-function isUnfreezableFunction(action: Actions): action is ResizeEvent {
-  return (
-    action.type === "RESIZE" ||
-    action.type === RESIZE_START ||
-    action.type === RESIZE_END
-  );
-}
 
 const doMove = (state: AppState, direction: Direction) => {
   let selected = state.selectedCell;
@@ -62,13 +56,30 @@ const doMove = (state: AppState, direction: Direction) => {
   };
 };
 
+const validStateAction = (state: State, action: Actions) => {
+  switch (state) {
+    case State.NORMAL:
+      // All things can happen when state is normal
+      return true;
+    case State.FROZEN:
+      return (
+        action.type === RESIZE ||
+        action.type === RESIZE_END ||
+        action.type === RESIZE_START
+      );
+    case State.PAINTING:
+      return true;
+  }
+};
+
 export function AppReducer(
   state: AppState = getInitialState(),
   action: Actions
 ): AppState {
-  if (state.settings.frozen && !isUnfreezableFunction(action)) {
+  if (!validStateAction(state.settings.state, action)) {
     return state;
   }
+
   switch (action.type) {
     case RESIZE:
     case RESIZE_START:
@@ -104,7 +115,8 @@ export function AppReducer(
       return doChangeHighlight(state, action.value);
     case IMPORT:
       return doImport(state, action.value);
-
+    case PAINT:
+      return doPaint(state, action);
     default:
       return state;
   }
@@ -125,7 +137,7 @@ function doResize(state: AppState, data: ResizeEvent): AppState {
     ...state,
     settings: {
       ...state.settings,
-      frozen: freeze
+      state: freeze ? State.FROZEN : State.NORMAL
     }
   };
 }

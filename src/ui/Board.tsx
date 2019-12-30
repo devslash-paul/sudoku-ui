@@ -112,12 +112,12 @@ export class BoardUI extends Component<BoardProps> {
 }
 
 
-const mapStateToProps = (state: AppState) => {
+const mapStateToProps = ({main}: {main: AppState}) => {
   return {
-    board: state.cells,
-    selected: state.selectedCell,
-    numbers: state.settings.enableHighlight ? state.selectedNumbers : [],
-    size: state.settings.boardSize,
+    board: main.cells,
+    selected: main.selectedCell,
+    numbers: main.settings.enableHighlight ? main.selectedNumbers : [],
+    size: main.settings.boardSize,
   };
 };
 

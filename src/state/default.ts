@@ -1,4 +1,4 @@
-import { AppState } from "./model";
+import { AppState, State } from "./model";
 
 export const getInitialState = () => {
   const res =localStorage.getItem('state');
@@ -16,7 +16,7 @@ export const getInitialState = () => {
 
 const defaultState: AppState = {
   settings: {
-    frozen: false,
+    state: State.NORMAL,
     enableHighlight: false,
     boardSize: 450,
   },

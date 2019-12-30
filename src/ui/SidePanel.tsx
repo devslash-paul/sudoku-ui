@@ -1,21 +1,21 @@
 import React, { Dispatch } from "react";
-import pako from 'pako';
 import { useToasts } from "react-toast-notifications";
 import { connect } from "react-redux";
-import { AppState, CellState, Settings } from "../state/model";
-import { onNew, onSetHighlight, onImport } from "../state/sidebarActions";
+import { AppState, CellState, Settings, State } from "../state/model";
+import { onNew, onSetHighlight, onImport, onChangePainting } from "../state/sidebarActions";
 import { Actions } from "../state/cellActions";
-import { parse } from "path";
 import { BoardUI } from "./Board";
 
 type SidebarProps = {
   board: string;
   settings: Settings;
   full: string;
+  painting: boolean;
   boardCells: Array<CellState>;
 
   onNew: () => void;
   onChangeHighlight: (e1: boolean) => void;
+  onChangePainting: (e1: boolean) => void;
   doImport: (board: string) => void;
 };
 
@@ -48,18 +48,29 @@ const Sidebar = (props: SidebarProps) => {
         checked={props.settings.enableHighlight}
         onChange={e => props.onChangeHighlight(e.target.checked)}
       />
+      <label htmlFor="painting">Enable Painting</label>
+      <input
+        id="painting"
+        type="checkbox"
+        checked={props.painting}
+        onChange={e => props.onChangePainting(e.target.checked)}
+      />
+
       <h5>Saved Boards</h5>
       <button>Save</button>
-      <BoardUI board={props.boardCells} selected={[]}
-      numbers={[]} size={200}
-      onClick={vfun}
-      onEnterNum={vfun}
-      onEnterSmallNum={vfun}
-      onDelete={vfun}
-      onBlur={vfun}
-      onMove={vfun}
-      onClickText={vfun}
-      onDrag={vfun}
+      <BoardUI
+        board={props.boardCells}
+        selected={[]}
+        numbers={[]}
+        size={200}
+        onClick={vfun}
+        onEnterNum={vfun}
+        onEnterSmallNum={vfun}
+        onDelete={vfun}
+        onBlur={vfun}
+        onMove={vfun}
+        onClickText={vfun}
+        onDrag={vfun}
       />
       <h5>External resources</h5>
       <a
@@ -77,23 +88,6 @@ const encodeBoard = (cells: CellState[]) => {
   return cells.map(x => x.mainNum || "0").reduce((p, n) => p + n, "");
 };
 const encodeFull = (cells: CellState[]) => {
-  // const input: number[] = [];
-  // cells
-  //   .map(x => {
-  //     if (x.mainNum != null) {
-  //       return (0x1 << x.mainNum) | 0x1;
-  //     }
-  //     let soln = 0;
-  //     x.small.forEach(small => {
-  //       soln |= 0x1 << small;
-  //     });
-  //     return soln;
-  //   })jjj
-  //   .forEach(x => input.push(x));
-  // var out = pako.deflate(new Uint8Array(input), { to: "string" });
-  // lets start by not supporting the large ones
-  // the largest number that i'm encoding is 1001
-  // therefore i can get 2 cells per byte
   const nums = cells.map(x => {
     if(x.mainNum == null) {
       return 0;
@@ -101,22 +95,17 @@ const encodeFull = (cells: CellState[]) => {
     return x.mainNum
   }).map(x => x.toString(2).padStart(4, "0"))
   .reduce((p,n) => p + n, "")
-  // const compressed = pako.deflate(nums)
-  // console.log("Compres")
   const val = (BigInt("0b" + nums))
   return val.toString(36);
-  // console.log(pako.inflate(compressed, { to: 'string'}))
-  // console.log(compressed)
-  // return btoa(compressed.toString())
-  // return Buffer.from(JSON.stringify(cells)).toString('base64')
 };
 
-const mapStateToProps = (appState: AppState) => {
+const mapStateToProps = ({main}: {main: AppState}) => {
   return {
-    board: encodeBoard(appState.cells),
-    full: encodeFull(appState.cells),
-    settings: appState.settings,
-    boardCells: appState.cells,
+    board: encodeBoard(main.cells),
+    full: encodeFull(main.cells),
+    settings: main.settings,
+    boardCells: main.cells,
+    painting: main.settings.state === State.PAINTING
   };
 };
 
@@ -124,6 +113,7 @@ const mapDispatchToProps = (dispatch: Dispatch<Actions>) => {
   return {
     onNew: () => dispatch(onNew()),
     onChangeHighlight: (value: boolean) => dispatch(onSetHighlight(value)),
+    onChangePainting: (value: boolean) => dispatch(onChangePainting(value)),
     doImport: (value: string) => dispatch(onImport(value))
   };
 };
