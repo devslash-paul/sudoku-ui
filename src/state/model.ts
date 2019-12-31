@@ -16,16 +16,18 @@ export type Settings = {
 }
 
 export type Link = {
-    a_x: number;
-    a_y: number;
-    b_x: number;
-    b_y: number;
-    a_color: string;
-    b_color: string;
+    start: Coordinate, 
+    end: Coordinate,
+}
+
+export type Coordinate = {
+    cell: number;
+    subcell: number;
 }
 
 export type PaintState = {
-    links: Array<Link>
+    links: Array<Link>,
+    paintStart: Coordinate | null,
 }
 
 export type AppState = {

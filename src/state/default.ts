@@ -16,7 +16,8 @@ export const getInitialState = () => {
 
 const defaultState: AppState = {
   paintState: {
-    links: []
+    links: [],
+    paintStart: null,
   },
   settings: {
     state: State.NORMAL,

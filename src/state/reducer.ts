@@ -17,7 +17,6 @@ import {
   RESIZE_START,
   RESIZE_END,
   PAINT,
-  BEGIN_PAINTING
 } from "./actionTypes";
 import { paintReducer } from "./paint";
 
@@ -80,12 +79,11 @@ export function AppReducer(
   state: AppState = getInitialState(),
   action: Actions
 ): AppState {
-
-  if(!validStateAction(state.settings.state, action)) {
+  if (!validStateAction(state.settings.state, action)) {
     return state;
   }
 
-  if(isPainting(state, action)) {
+  if (isPainting(state, action)) {
     return paintReducer(state, action);
   }
 
@@ -151,7 +149,7 @@ function doResize(state: AppState, data: ResizeEvent): AppState {
 
 function doInsert(state: AppState, value: number): AppState {
   // only works with a single selection
-  if (state.selectedCell.length !== 1) {
+  if (state.selectedCell.length !== 1 || value === 0) {
     return state;
   }
   const index = state.selectedCell[0];
@@ -215,6 +213,9 @@ function doClickText(state: AppState, number: number) {
 function doInsertSmall(state: AppState, action: InsertSmallEvent) {
   // Here - If all cells selected have the small thing, then we're deleting
   // otherwise we are adding
+  if (action.number === 0) {
+    return state;
+  }
   const cells = [...state.cells];
   const adding = state.selectedCell
     .map(x => cells[x].small.indexOf(action.number) === -1)

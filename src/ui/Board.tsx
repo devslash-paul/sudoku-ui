@@ -3,6 +3,7 @@ import React, {
   Component
 } from "react";
 import { AppState, CellState } from "../state/model";
+import CSS from 'csstype';
 import {
   selectCell,
   insertCell,
@@ -30,13 +31,14 @@ type BoardProps = {
   onDrag: (index: number) => void;
   onBlur: (index: number) => void;
   onMove: (direction: Direction) => void;
-  onClickText: (number: number) => void;
+  onClickText: (i: number, number: number) => void;
 };
 
 export class BoardUI extends Component<BoardProps> {
   render() {
-    const rowStyle = {
+    const rowStyle: CSS.Properties = {
       display: "flex",
+      pointerEvents: 'all',
       flexFlow: "row wrap",
       width: `${this.props.size}px`,
       lineHeight: `${this.props.size}px`
@@ -46,6 +48,7 @@ export class BoardUI extends Component<BoardProps> {
       const onClick = () => this.props.onClick(number);
       const onDrag = () => this.props.onDrag(number);
       const onBlur = () => this.props.onBlur(number);
+      const onClickText = (val: number) => this.props.onClickText(number, val);
       const onInput = (val: number, isMeta: boolean) => {
         let key = String.fromCharCode(val)
         if (isNaN(parseInt(key))) {
@@ -91,7 +94,7 @@ export class BoardUI extends Component<BoardProps> {
             this.props.selected.indexOf(number) !== -1 &&
             this.props.selected.length === 1
           }
-          onClickText={this.props.onClickText}
+          onClickText={onClickText}
           onClick={onClick}
           onBlur={onBlur}
           onInput={onInput}
@@ -144,8 +147,8 @@ const mapDispatchToProps = (dispatch: Dispatch<Actions>) => {
     onMove: (direction: Direction) => {
       dispatch(move(direction))
     },
-    onClickText: (number: number) => {
-      dispatch(clickText(number))
+    onClickText: (index: number, number: number) => {
+      dispatch(clickText(index, number, 'SINGLE'));
     }
   };
 };

@@ -16,8 +16,10 @@ import {
   PAINT,
   RESIZE_END,
   BEGIN_PAINTING,
-  END_PAINTING
+  END_PAINTING,
+  SEND_COORDINATE
 } from "./actionTypes";
+import { Coordinate } from "./model";
 
 export type Actions =
   | SelectEvent
@@ -32,7 +34,13 @@ export type Actions =
   | SidebarEvent
   | HighlightChangeEvent
   | ImportEvent
+  | CoordinateEvent
   | PaintEvent;
+
+export type CoordinateEvent = {
+  type: typeof SEND_COORDINATE,
+  coordinate: Coordinate
+}
 
 export type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT";
 
@@ -56,7 +64,9 @@ export type HighlightChangeEvent = {
 
 export type ClickTextEvent = {
   type: typeof CLICK_TEXT;
+  index: number;
   number: number;
+  clickType: 'SINGLE' | 'DOUBLE';
 };
 
 export type MoveEvent = {
@@ -155,9 +165,11 @@ export function move(direction: Direction): MoveEvent {
   };
 }
 
-export function clickText(number: number): ClickTextEvent {
+export function clickText(index: number, number: number, clickType: 'SINGLE' | 'DOUBLE'): ClickTextEvent {
   return {
     type: CLICK_TEXT,
-    number
+    index,
+    number,
+    clickType,
   };
 }

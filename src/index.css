@@ -32,18 +32,16 @@ code {
 }
 
 .tile:nth-child(3n):not(:nth-child(9n)) {
-  border-right: 2px solid black;
+  border-right: 3px solid black;
 }
 
 .tile:nth-child(n+19):nth-child(-n+27) {
-  border-bottom: 2px solid #000;
+  border-bottom: 3px solid #000;
 }
  
 .tile:nth-child(n+46):nth-child(-n+54) {
-  border-bottom: 2px solid #000;
+  border-bottom: 3px solid #000;
 }
-
-
 
 [tabindex] {
   outline: none;
