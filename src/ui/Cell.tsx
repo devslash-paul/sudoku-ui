@@ -33,7 +33,7 @@ export class Cell extends Component<CellProps> {
       this.props.number !== nextProps.number ||
       this.props.selected !== nextProps.selected ||
       this.props.small !== nextProps.small ||
-      this.props.highlight !== nextProps.highlight
+      JSON.stringify(this.props.highlight) !== JSON.stringify(nextProps.highlight)
     );
   }
 

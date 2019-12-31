@@ -40,6 +40,18 @@ function doSendCoordinate(state: AppState, action: CoordinateEvent) {
   ) {
     return state;
   }
+  if(action.coordinate == state.paintState.paintStart) {
+    // Lets flip the color, or cancel if nothing there.
+    const links = [...state.paintState.links]
+    return {
+      ...state,
+      paintState: {
+        ...state.paintState, 
+        links,
+        paintStart: null,
+      }
+    }
+  }
   const link = {
     start: start,
     end: coord
@@ -64,7 +76,7 @@ function doStartLine(state: AppState, action: ClickTextEvent) {
         subcell: action.number - 1
       }
     }
-  };
+  }
 }
 
 function doPaint(state: AppState, action: PaintEvent): AppState {

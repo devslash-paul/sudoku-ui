@@ -31,7 +31,7 @@ type BoardProps = {
   onDrag: (index: number) => void;
   onBlur: (index: number) => void;
   onMove: (direction: Direction) => void;
-  onClickText: (i: number, number: number) => void;
+  onClickText: (i: number, number: number, type: 'SINGLE'| 'DOUBLE') => void;
 };
 
 export class BoardUI extends Component<BoardProps> {
@@ -48,28 +48,29 @@ export class BoardUI extends Component<BoardProps> {
       const onClick = () => this.props.onClick(number);
       const onDrag = () => this.props.onDrag(number);
       const onBlur = () => this.props.onBlur(number);
-      const onClickText = (val: number) => this.props.onClickText(number, val);
+      const onClickText = (val: number) => this.props.onClickText(number, val, 'SINGLE');
+      const onDoubleClickText = (val: number) => this.props.onClickText(number, val, 'DOUBLE');
       const onInput = (val: number, isMeta: boolean) => {
         let key = String.fromCharCode(val)
         if (isNaN(parseInt(key))) {
           // check if it's backspace
-          if(val === 8 || val === 46) {
+          if (val === 8 || val === 46) {
             this.props.onDelete(number)
             return;
           }
           else if (val === 38) {
             this.props.onMove("UP")
             return;
-          } else if(val === 37) {
+          } else if (val === 37) {
             this.props.onMove("LEFT")
             return;
-          } else if(val === 40) {
+          } else if (val === 40) {
             this.props.onMove("DOWN")
             return;
-          } else if(val === 39) {
+          } else if (val === 39) {
             this.props.onMove("RIGHT")
             return;
-          } else if( val >= 97 && val <= 105) {
+          } else if (val >= 97 && val <= 105) {
             //todo: fix up this return nightmare
             key = String.fromCharCode(val - 48)
           } else {
@@ -87,7 +88,7 @@ export class BoardUI extends Component<BoardProps> {
           key={number}
           number={cell.mainNum}
           small={cell.small}
-          size={this.props.size/9}
+          size={this.props.size / 9}
           highlight={this.props.numbers}
           selected={this.props.selected.indexOf(number) !== -1}
           focused={
@@ -140,7 +141,7 @@ const mapDispatchToProps = (dispatch: Dispatch<Actions>) => {
     },
     onDrag: (index: number) => {
       dispatch(dragCell(index))
-    }, 
+    },
     onBlur: (index: number) => {
       dispatch(blurCell(index))
     },
@@ -148,8 +149,8 @@ const mapDispatchToProps = (dispatch: Dispatch<Actions>) => {
       dispatch(move(direction))
     },
     onClickText: (index: number, number: number) => {
-      dispatch(clickText(index, number, 'SINGLE'));
-    }
+      dispatch(clickText(index, number));
+    },
   };
 };
 

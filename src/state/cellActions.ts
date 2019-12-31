@@ -66,7 +66,6 @@ export type ClickTextEvent = {
   type: typeof CLICK_TEXT;
   index: number;
   number: number;
-  clickType: 'SINGLE' | 'DOUBLE';
 };
 
 export type MoveEvent = {
@@ -165,11 +164,10 @@ export function move(direction: Direction): MoveEvent {
   };
 }
 
-export function clickText(index: number, number: number, clickType: 'SINGLE' | 'DOUBLE'): ClickTextEvent {
+export function clickText(index: number, number: number): ClickTextEvent {
   return {
     type: CLICK_TEXT,
     index,
     number,
-    clickType,
   };
 }
