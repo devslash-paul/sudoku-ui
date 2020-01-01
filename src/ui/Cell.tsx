@@ -6,7 +6,7 @@ type CellProps = {
   small: Array<number>;
   selected: boolean;
   focused: boolean;
-  highlight:number | null;
+  highlight: number | null;
   size: number;
   onClick: (meta: boolean) => void;
   onClickText: (number: number) => void;
@@ -24,7 +24,7 @@ const style: CSS.Properties = {
 };
 const highlightText: CSS.Properties = {
   color: "red",
-  fontWeight: 'bold'
+  fontWeight: "bold"
   // background: "yellow"
 };
 
@@ -81,15 +81,16 @@ export class Cell extends Component<CellProps> {
       const thirdSize = Math.floor(this.props.size / 4);
       let s: React.CSSProperties = {
         position: pos,
-          fontSize: `${thirdSize}px`,
-          height: `${thirdSize}px`,
-          display: `inline-block`,
-          textAlign: `left`,
-          lineHeight: `${thirdSize}px`,
-        left: ((x - 1) % 3) * (this.props.size / 3) + ((3/50) * this.props.size),
+        fontSize: `${thirdSize}px`,
+        height: `${thirdSize}px`,
+        display: `inline-block`,
+        textAlign: `left`,
+        lineHeight: `${thirdSize}px`,
+        left:
+          ((x - 1) % 3) * (this.props.size / 3) + (3 / 50) * this.props.size,
         top: Math.floor((x - 1) / 3) * (this.props.size / 3)
       };
-      if (this.props.highlight ===(x)) {
+      if (this.props.highlight === x) {
         s = {
           ...s,
           ...highlightText
@@ -109,7 +110,7 @@ export class Cell extends Component<CellProps> {
     }
     const clickHandler = () =>
       this.props.number && this.props.onClickText(this.props.number);
-    const highlight = this.props.highlight === this.props.number;;
+    const highlight = this.props.highlight === this.props.number;
     const style = highlight ? highlightText : {};
     return (
       <div className="content" onClick={clickHandler} style={style}>
