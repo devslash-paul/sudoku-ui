@@ -1,12 +1,10 @@
 import React, { useState, Dispatch } from "react";
 import CSS from "csstype";
 import { connect } from "react-redux";
-import { AppState, State, Coordinate, Link, PaintState } from "../state/model";
+import { AppState, State, Coordinate, Link } from "../state/model";
 import { getSmallCoordinatesFromXY, toCoordinates } from "./size/sizer";
 import { Actions } from "../state/cellActions";
 import { SEND_COORDINATE } from "../state/actionTypes";
-import { start } from "repl";
-import { Z_STREAM_END } from "zlib";
 
 const defaultStyle: CSS.Properties = {
   position: "absolute",

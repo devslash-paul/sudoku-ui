@@ -60,17 +60,10 @@ const Sidebar = (props: SidebarProps) => {
       <button>Save</button>
       <BoardUI
         board={props.boardCells}
-        selected={[]}
-        numbers={[]}
         size={200}
-        onClick={vfun}
         onEnterNum={vfun}
         onEnterSmallNum={vfun}
         onDelete={vfun}
-        onBlur={vfun}
-        onMove={vfun}
-        onClickText={vfun}
-        onDrag={vfun}
       />
       <h5>External resources</h5>
       <a

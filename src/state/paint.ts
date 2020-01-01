@@ -1,4 +1,4 @@
-import { AppState, State, Link } from "./model";
+import { AppState, State } from "./model";
 import {
   PaintEvent,
   Actions,
@@ -9,7 +9,6 @@ import {
   BEGIN_PAINTING,
   PAINT,
   END_PAINTING,
-  CLICK_TEXT,
   SEND_COORDINATE
 } from "./actionTypes";
 
@@ -17,8 +16,6 @@ export function paintReducer(state: AppState, action: Actions): AppState {
   switch (action.type) {
     case PAINT:
       return doPaint(state, action);
-    case CLICK_TEXT:
-      return doStartLine(state, action);
     case SEND_COORDINATE:
       return doSendCoordinate(state, action);
   }
@@ -40,7 +37,7 @@ function doSendCoordinate(state: AppState, action: CoordinateEvent) {
   ) {
     return state;
   }
-  if(action.coordinate == state.paintState.paintStart) {
+  if(action.coordinate === state.paintState.paintStart) {
     // Lets flip the color, or cancel if nothing there.
     const links = [...state.paintState.links]
     return {

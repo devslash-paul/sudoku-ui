@@ -6,11 +6,11 @@ type CellProps = {
   small: Array<number>;
   selected: boolean;
   focused: boolean;
-  highlight: Array<number>;
+  highlight:number | null;
   size: number;
   onClick: () => void;
   onClickText: (number: number) => void;
-  onInput: (arg0: number, meta: boolean) => void;
+  onInput: (arg0: number, e: string, meta: boolean) => void;
   onBlur: () => void;
   onMouseover: () => void;
 };
@@ -22,9 +22,10 @@ const style: CSS.Properties = {
   background: "white",
   flexBasis: "calc(100% /9)"
 };
-const highlightText = {
-  color: "green",
-  background: "yellow"
+const highlightText: CSS.Properties = {
+  color: "red",
+  fontWeight: 'bold'
+  // background: "yellow"
 };
 
 export class Cell extends Component<CellProps> {
@@ -33,7 +34,7 @@ export class Cell extends Component<CellProps> {
       this.props.number !== nextProps.number ||
       this.props.selected !== nextProps.selected ||
       this.props.small !== nextProps.small ||
-      JSON.stringify(this.props.highlight) !== JSON.stringify(nextProps.highlight)
+      this.props.highlight !== nextProps.highlight
     );
   }
 
@@ -63,8 +64,8 @@ export class Cell extends Component<CellProps> {
         tabIndex={0}
         className="tile"
         style={extraStyle}
-        onClick={this.props.onClick}
-        onKeyDown={e => this.props.onInput(e.keyCode, e.shiftKey)}
+        onMouseDown={this.props.onClick}
+        onKeyDown={e => this.props.onInput(e.keyCode, e.key, e.shiftKey)}
         onMouseMove={this.onMouseover}
         onBlur={this.props.onBlur}
       >
@@ -88,7 +89,7 @@ export class Cell extends Component<CellProps> {
         left: ((x - 1) % 3) * (this.props.size / 3) + ((3/50) * this.props.size),
         top: Math.floor((x - 1) / 3) * (this.props.size / 3)
       };
-      if (this.props.highlight.indexOf(x) !== -1) {
+      if (this.props.highlight ===(x)) {
         s = {
           ...s,
           ...highlightText
@@ -108,7 +109,7 @@ export class Cell extends Component<CellProps> {
     }
     const clickHandler = () =>
       this.props.number && this.props.onClickText(this.props.number);
-    const highlight = this.props.highlight.indexOf(this.props.number) !== -1;
+    const highlight = this.props.highlight === this.props.number;;
     const style = highlight ? highlightText : {};
     return (
       <div className="content" onClick={clickHandler} style={style}>

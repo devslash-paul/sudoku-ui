@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Paint } from './Painter';
 import { connect } from 'react-redux';
 import { AppState, State, Coordinate, Link } from '../state/model';
-import CSS from 'csstype';
 
 
 export type Paint = {
