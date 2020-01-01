@@ -154,27 +154,24 @@ function doInsertSmall(state: AppState, action: InsertSmallEvent) {
 }
 
 function doDelete(state: AppState, action: DeleteEvent) {
-  // if (state.selectedCell.length !== 1) {
-  //   return state;
-  // }
-  // const index = state.selectedCell[0];
-  // let deleteCell = state.cells[index];
-  // const newDeleteCells = [...state.cells];
+  const index = action.index;
+  let deleteCell = state.cells[index];
+  const newDeleteCells = [...state.cells];
 
-  // if (deleteCell.mainNum == null) {
-  //   deleteCell = {
-  //     ...deleteCell,
-  //     small: []
-  //   };
-  // } else {
-  //   deleteCell = {
-  //     ...deleteCell,
-  //     mainNum: null
-  //   };
-  // }
-  // newDeleteCells[index] = deleteCell;
+  if (deleteCell.mainNum == null) {
+    deleteCell = {
+      ...deleteCell,
+      small: []
+    };
+  } else {
+    deleteCell = {
+      ...deleteCell,
+      mainNum: null
+    };
+  }
+  newDeleteCells[index] = deleteCell;
   return {
     ...state,
-    // cells: newDeleteCells
+    cells: newDeleteCells
   };
 }

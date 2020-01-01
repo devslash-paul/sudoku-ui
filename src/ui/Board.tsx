@@ -29,7 +29,7 @@ const onMove = (
     }
 
     let original = selectedState.values().next().value;
-    let selection = original
+    let selection = original;
     switch (direction) {
       case "UP":
         selection -= 9;
@@ -44,11 +44,11 @@ const onMove = (
         selection += 1;
         break;
     }
-    if(selection <= -1) selection = original;
-    if(selection >= 81) selection = original;
-    const res: Set<number> = new Set()
-    res.add(selection)
-    setSelected(res)
+    if (selection <= -1) selection = original;
+    if (selection >= 81) selection = original;
+    const res: Set<number> = new Set();
+    res.add(selection);
+    setSelected(res);
   };
 };
 
@@ -56,18 +56,21 @@ const onInput = (
   index: number,
   selectedState: Set<number>,
   doMove: (d: Direction) => void,
+  onDelete: (idx: number) => void,
   props: BoardProps
 ) => {
-  return (val: number, key: string, isMeta: boolean) => {
+  return (val: number, isMeta: boolean) => {
+    if(val === 46 || val === 8) {
+      return onDelete(index);
+    }
     if ((val >= 49 && val <= 57) || (val >= 97 && val <= 105)) {
       // we have a number entered. Lets quickly normalize the numpad
       if (val > 57) {
         val -= 48;
       }
       val -= 48;
-      console.log(val);
       if (!isMeta) {
-        props.onEnterNum(index, val);
+        props.onEnterNum(selectedState.values().next().value, val);
       } else {
         props.onEnterSmallNum(Array.from(selectedState), val);
       }
@@ -111,15 +114,20 @@ export const BoardUI = (props: BoardProps) => {
     };
     const onBlur = () => {
       setHighlight(null);
-      setSelected(new Set());
     };
     const onClickText = (val: number) => {
       setHighlight(val);
     };
-    const select = () => {
-      const res: Set<number> = new Set();
-      res.add(index);
-      setSelected(res);
+    const select = (meta: boolean) => {
+      if (!meta) {
+        const res: Set<number> = new Set();
+        res.add(index);
+        setSelected(res);
+      } else {
+        const res = new Set(selectedState);
+        res.add(index);
+        setSelected(res);
+      }
     };
     return (
       <Cell
@@ -137,6 +145,7 @@ export const BoardUI = (props: BoardProps) => {
           index,
           selectedState,
           onMove(selectedState, setSelected),
+          props.onDelete,
           props
         )}
         onMouseover={onDrag}
