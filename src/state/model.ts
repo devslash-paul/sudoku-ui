@@ -32,8 +32,6 @@ export type PaintState = {
 
 export type AppState = {
     cells: Array<CellState>,
-    selectedCell: Array<number>,
-    selectedNumbers: Array<number>,
     settings: Settings,
     paintState: PaintState,
 }

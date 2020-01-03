@@ -1,156 +1,197 @@
-import React, {
-  Dispatch,
-  Component
-} from "react";
-import { AppState, CellState } from "../state/model";
-import CSS from 'csstype';
+import React, { Dispatch, useState } from "react";
+import { AppState, CellState, State } from "../state/model";
+import CSS from "csstype";
 import {
-  selectCell,
   insertCell,
   insertSmallCell,
   Actions,
   deleteCell,
-  dragCell,
-  blurCell,
-  Direction,
-  move,
-  clickText
+  Direction
 } from "../state/cellActions";
 import { connect } from "react-redux";
 import { Cell } from "./Cell";
 
 type BoardProps = {
   board: Array<CellState>;
-  selected: Array<number>;
-  numbers: Array<number>;
-  size: number,
-  onClick: (argo0: number | null) => void;
-  onEnterNum: (num: number) => void;
-  onEnterSmallNum: (index: number, num: number) => void;
+  size: number;
+  interact: boolean;
+  onEnterNum: (index: number, num: number) => void;
+  onEnterSmallNum: (index: Array<number>, num: number) => void;
   onDelete: (index: number) => void;
-  onDrag: (index: number) => void;
-  onBlur: (index: number) => void;
-  onMove: (direction: Direction) => void;
-  onClickText: (i: number, number: number, type: 'SINGLE'| 'DOUBLE') => void;
 };
 
-export class BoardUI extends Component<BoardProps> {
-  render() {
-    const rowStyle: CSS.Properties = {
-      display: "flex",
-      pointerEvents: 'all',
-      flexFlow: "row wrap",
-      width: `${this.props.size}px`,
-      lineHeight: `${this.props.size}px`
+const onMove = (
+  selectedState: Set<number>,
+  setSelected: Dispatch<React.SetStateAction<Set<number>>>
+) => {
+  return (direction: Direction) => {
+    if (selectedState.size !== 1) {
+      return;
     }
-    const board = this.props.board;
-    let cells = board.map((cell, number) => {
-      const onClick = () => this.props.onClick(number);
-      const onDrag = () => this.props.onDrag(number);
-      const onBlur = () => this.props.onBlur(number);
-      const onClickText = (val: number) => this.props.onClickText(number, val, 'SINGLE');
-      const onDoubleClickText = (val: number) => this.props.onClickText(number, val, 'DOUBLE');
-      const onInput = (val: number, isMeta: boolean) => {
-        let key = String.fromCharCode(val)
-        if (isNaN(parseInt(key))) {
-          // check if it's backspace
-          if (val === 8 || val === 46) {
-            this.props.onDelete(number)
-            return;
-          }
-          else if (val === 38) {
-            this.props.onMove("UP")
-            return;
-          } else if (val === 37) {
-            this.props.onMove("LEFT")
-            return;
-          } else if (val === 40) {
-            this.props.onMove("DOWN")
-            return;
-          } else if (val === 39) {
-            this.props.onMove("RIGHT")
-            return;
-          } else if (val >= 97 && val <= 105) {
-            //todo: fix up this return nightmare
-            key = String.fromCharCode(val - 48)
-          } else {
-            return;
-          }
-        }
-        if (!isMeta) {
-          this.props.onEnterNum(parseInt(key));
-        } else {
-          this.props.onEnterSmallNum(number, parseInt(key));
-        }
-      };
-      return (
-        <Cell
-          key={number}
-          number={cell.mainNum}
-          small={cell.small}
-          size={this.props.size / 9}
-          highlight={this.props.numbers}
-          selected={this.props.selected.indexOf(number) !== -1}
-          focused={
-            this.props.selected.indexOf(number) !== -1 &&
-            this.props.selected.length === 1
-          }
-          onClickText={onClickText}
-          onClick={onClick}
-          onBlur={onBlur}
-          onInput={onInput}
-          onMouseover={onDrag}
-        />
-      );
-    });
-    return (
-      <div
-        tabIndex={1}
-        className="box"
-        style={rowStyle}
-      >
-        {cells}
-      </div>
-    );
-  }
-}
 
+    let original = selectedState.values().next().value;
+    let selection = original;
+    switch (direction) {
+      case "UP":
+        selection -= 9;
+        break;
+      case "DOWN":
+        selection += 9;
+        break;
+      case "LEFT":
+        selection -= 1;
+        break;
+      case "RIGHT":
+        selection += 1;
+        break;
+    }
+    if (selection <= -1) selection = original;
+    if (selection >= 81) selection = original;
+    const res: Set<number> = new Set();
+    res.add(selection);
+    setSelected(res);
+  };
+};
+
+const onInput = (
+  index: number,
+  selectedState: Set<number>,
+  doMove: (d: Direction) => void,
+  onDelete: (idx: number) => void,
+  props: BoardProps
+) => {
+  return (val: number, isMeta: boolean) => {
+    if (val === 46 || val === 8) {
+      return onDelete(index);
+    }
+    if ((val >= 49 && val <= 57) || (val >= 97 && val <= 105)) {
+      // we have a number entered. Lets quickly normalize the numpad
+      if (val > 57) {
+        val -= 48;
+      }
+      val -= 48;
+      if (!isMeta) {
+        props.onEnterNum(selectedState.values().next().value, val);
+      } else {
+        props.onEnterSmallNum(Array.from(selectedState), val);
+      }
+    } else if (val === 8 || val === 46) {
+      return props.onDelete(index);
+    }
+    if (selectedState.size === 1) {
+      if (val === 38) {
+        return doMove("UP");
+      } else if (val === 37) {
+        return doMove("LEFT");
+      } else if (val === 40) {
+        return doMove("DOWN");
+      } else if (val === 39) {
+        return doMove("RIGHT");
+      }
+    }
+  };
+};
+
+type Highlight = number | null;
+
+export const BoardUI = (props: BoardProps) => {
+  const rowStyle: CSS.Properties = {
+    display: "flex",
+    pointerEvents: "all",
+    flexFlow: "row wrap",
+    width: `${props.size}px`,
+    lineHeight: `${props.size}px`
+  };
+  const { interact } = props;
+  const defaultSelectedCell: Set<number> = new Set();
+  const [selectedState, setSelected] = useState(defaultSelectedCell);
+  const [highlightState, setHighlight] = useState<Highlight>(null);
+
+  const board = props.board;
+  let cells = board.map((cell, index) => {
+    const onDrag = () => {
+      if (!interact) {
+        return;
+      }
+      const res = new Set(selectedState);
+      res.add(index);
+      setSelected(res);
+    };
+    const onBlur = () => {
+      if (!interact) {
+        return;
+      }
+      setHighlight(null);
+    };
+    const onClickText = (val: number) => {
+      if (!interact) {
+        return;
+      }
+      setHighlight(val);
+    };
+    const select = (meta: boolean) => {
+      if (!interact) {
+        return;
+      }
+      if (!meta) {
+        const res: Set<number> = new Set();
+        res.add(index);
+        setSelected(res);
+      } else {
+        const res = new Set(selectedState);
+        res.add(index);
+        setSelected(res);
+      }
+    };
+    return (
+      <Cell
+        key={index}
+        number={cell.mainNum}
+        small={cell.small}
+        size={props.size / 9}
+        highlight={highlightState}
+        selected={selectedState.has(index)}
+        focused={selectedState.has(index) && selectedState.size === 1}
+        onClickText={onClickText}
+        onClick={select}
+        onBlur={onBlur}
+        onInput={onInput(
+          index,
+          selectedState,
+          onMove(selectedState, setSelected),
+          props.onDelete,
+          props
+        )}
+        onMouseover={onDrag}
+      />
+    );
+  });
+  return (
+    <div tabIndex={1} className="box" style={rowStyle}>
+      {cells}
+    </div>
+  );
+};
 
 const mapStateToProps = (main: AppState) => {
   return {
     board: main.cells,
-    selected: main.selectedCell,
-    numbers: main.settings.enableHighlight ? main.selectedNumbers : [],
     size: main.settings.boardSize,
+    interact: main.settings.state === State.NORMAL
   };
 };
 
 const mapDispatchToProps = (dispatch: Dispatch<Actions>) => {
   return {
-    onClick: (index: number | null) => {
-      dispatch(selectCell(index));
+    onEnterNum: (index: number, num: number) => {
+      dispatch(insertCell(index, num));
     },
-    onEnterNum: (num: number) => {
-      dispatch(insertCell(num));
-    },
-    onEnterSmallNum: (index: number, num: number) => {
+    onEnterSmallNum: (index: Array<number>, num: number) => {
       dispatch(insertSmallCell(index, num));
     },
     onDelete: (index: number) => {
-      dispatch(deleteCell(index))
-    },
-    onDrag: (index: number) => {
-      dispatch(dragCell(index))
-    },
-    onBlur: (index: number) => {
-      dispatch(blurCell(index))
-    },
-    onMove: (direction: Direction) => {
-      dispatch(move(direction))
-    },
-    onClickText: (index: number, number: number) => {
-      dispatch(clickText(index, number));
-    },
+      dispatch(deleteCell(index));
+    }
   };
 };
 

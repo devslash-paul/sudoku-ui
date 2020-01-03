@@ -24,7 +24,6 @@ const defaultState: AppState = {
     enableHighlight: false,
     boardSize: 450,
   },
-  selectedNumbers: [],
   cells: [
     {
       mainNum: 9,
@@ -351,5 +350,4 @@ const defaultState: AppState = {
       small: []
     }
   ],
-  selectedCell: []
 };

@@ -7,7 +7,7 @@ import { Provider } from "react-redux";
 import { ConnectedPanel } from "./ui/SidePanel";
 import { Skeleton } from "./ui/Skeleton";
 import { ResizePanel } from "./ui/ResizeablePanel";
-import { PaintManager, ConnectedPainter } from "./ui/PaintManager";
+import { ConnectedPainter } from "./ui/PaintManager";
 
 const App: React.FC = () => {
   const Mainboard = (
