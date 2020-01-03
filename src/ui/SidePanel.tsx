@@ -1,5 +1,6 @@
 import React, { Dispatch } from "react";
 import { useToasts } from "react-toast-notifications";
+import CSS from "csstype";
 import { connect } from "react-redux";
 import { AppState, CellState, Settings, State } from "../state/model";
 import Button from "@material-ui/core/Button";
@@ -39,14 +40,24 @@ const doExport = (addToast: any, board: string) => {
 };
 const Sidebar = (props: SidebarProps) => {
   const { addToast } = useToasts();
-  const boxStyle = { margin: "0 3px" };
+  const boxStyle = { margin: "0px", borderRadius: "0" };
+  const topLeft: CSS.Properties = {
+    borderTopLeftRadius: "10px"
+  };
+  const topRight: CSS.Properties = {
+    borderTopRightRadius: "10px"
+  };
   const vfun = (e: any) => {};
 
   return (
     <div>
       <h5>SudokuUI</h5>
       <Box component="span">
-        <Button style={boxStyle} variant="contained" onClick={props.onNew}>
+        <Button
+          style={{ ...boxStyle, ...topLeft }}
+          variant="contained"
+          onClick={props.onNew}
+        >
           New
         </Button>
         <Button
@@ -57,7 +68,7 @@ const Sidebar = (props: SidebarProps) => {
           Import
         </Button>
         <Button
-          style={boxStyle}
+          style={{ ...boxStyle, ...topRight }}
           variant="contained"
           onClick={() => doExport(addToast, props.full)}
         >

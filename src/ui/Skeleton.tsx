@@ -9,7 +9,6 @@ export type SkeletonProps = {
 const bodyStyle: CSS.Properties = {
   display: "flex",
   minHeight: "100%"
-  //   justifyContent: 'center'
 };
 
 const boardStyle: CSS.Properties = {
