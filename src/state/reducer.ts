@@ -15,7 +15,7 @@ import {
   RESIZE,
   RESIZE_START,
   RESIZE_END,
-  PAINT,
+  PAINT
 } from "./actionTypes";
 import { paintReducer } from "./paint";
 
@@ -131,7 +131,7 @@ function doSidebar(state: AppState, action: SidebarEvent): AppState {
       const newCells = new Array(81).fill({ mainNum: null, small: [] });
       return {
         ...state,
-        cells: newCells,
+        cells: newCells
       };
   }
 }
@@ -142,15 +142,21 @@ function doInsertSmall(state: AppState, action: InsertSmallEvent) {
     .map(x => cells[x].small.indexOf(action.number) === -1)
     .reduce((p, n) => p || n, false);
 
-  action.index.forEach(x => {
-    const index = cells[x].small.indexOf(action.number);
-    if (adding && index === -1) {
-      cells[x].small = [...cells[x].small, action.number];
-    } else if (!adding && index !== -1) {
-      cells[x].small = cells[x].small.filter((x, n) => n !== index);
+  action.index.forEach(index => {
+    const alreadyHas = cells[index].small.indexOf(action.number) !== -1;
+    if (adding && !alreadyHas) {
+      cells[index] = {
+        ...cells[index],
+        small: [...cells[index].small, action.number]
+      };
+    } else if (!adding && alreadyHas) {
+      cells[index] = {
+        ...cells[index],
+        small: cells[index].small.filter(s => s !== action.number)
+      };
     }
   });
-  return { ...state, cells };
+  return { ...state, cells: [...cells] };
 }
 
 function doDelete(state: AppState, action: DeleteEvent) {

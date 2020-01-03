@@ -2,9 +2,16 @@ import React, { Dispatch } from "react";
 import { useToasts } from "react-toast-notifications";
 import { connect } from "react-redux";
 import { AppState, CellState, Settings, State } from "../state/model";
-import { onNew, onSetHighlight, onImport, onChangePainting } from "../state/sidebarActions";
+import Button from "@material-ui/core/Button";
+import {
+  onNew,
+  onSetHighlight,
+  onImport,
+  onChangePainting
+} from "../state/sidebarActions";
 import { Actions } from "../state/cellActions";
 import { BoardUI } from "./Board";
+import { Box } from "@material-ui/core";
 
 type SidebarProps = {
   board: string;
@@ -28,38 +35,62 @@ const onImportClicked = (doImport: (e1: string) => void) => {
 
 const doExport = (addToast: any, board: string) => {
   navigator.clipboard.writeText(board);
-  addToast("URL copied to clipboard", { appearance: 'info' });
+  addToast("URL copied to clipboard", { appearance: "info" });
 };
 const Sidebar = (props: SidebarProps) => {
   const { addToast } = useToasts();
-  const vfun = (e: any) => {}
+  const boxStyle = { margin: "0 3px" };
+  const vfun = (e: any) => {};
 
   return (
     <div>
       <h5>SudokuUI</h5>
-      <button onClick={props.onNew}>New</button>
-      <button onClick={e => onImportClicked(props.doImport)}>Import</button>
-      <button onClick={() => doExport(addToast, props.full)}>Share</button>
+      <Box component="span">
+        <Button style={boxStyle} variant="contained" onClick={props.onNew}>
+          New
+        </Button>
+        <Button
+          style={boxStyle}
+          variant="contained"
+          onClick={e => onImportClicked(props.doImport)}
+        >
+          Import
+        </Button>
+        <Button
+          style={boxStyle}
+          variant="contained"
+          onClick={() => doExport(addToast, props.full)}
+        >
+          Share
+        </Button>
+      </Box>
       <h5>Settings</h5>
-      <label htmlFor="highlight">Enable Highlights</label>
-      <input
-        id="highlight"
-        type="checkbox"
-        checked={props.settings.enableHighlight}
-        onChange={e => props.onChangeHighlight(e.target.checked)}
-      />
-      <label htmlFor="painting">Enable Painting</label>
-      <input
-        id="painting"
-        type="checkbox"
-        checked={props.painting}
-        onChange={e => props.onChangePainting(e.target.checked)}
-      />
+      <div>
+        <label htmlFor="highlight">Enable Highlights</label>
+        <input
+          id="highlight"
+          type="checkbox"
+          checked={props.settings.enableHighlight}
+          onChange={e => props.onChangeHighlight(e.target.checked)}
+        />
+      </div>
+      <div>
+        <label htmlFor="painting">Enable Painting</label>
+        <input
+          id="painting"
+          type="checkbox"
+          checked={props.painting}
+          onChange={e => props.onChangePainting(e.target.checked)}
+        />
+      </div>
 
       <h5>Saved Boards</h5>
-      <button>Save</button>
+      <Button variant="contained" color="primary">
+        Save
+      </Button>
       <BoardUI
         board={props.boardCells}
+        interact={false}
         size={200}
         onEnterNum={vfun}
         onEnterSmallNum={vfun}
@@ -81,14 +112,16 @@ const encodeBoard = (cells: CellState[]) => {
   return cells.map(x => x.mainNum || "0").reduce((p, n) => p + n, "");
 };
 const encodeFull = (cells: CellState[]) => {
-  const nums = cells.map(x => {
-    if(x.mainNum == null) {
-      return 0;
-    }
-    return x.mainNum
-  }).map(x => x.toString(2).padStart(4, "0"))
-  .reduce((p,n) => p + n, "")
-  const val = (BigInt("0b" + nums))
+  const nums = cells
+    .map(x => {
+      if (x.mainNum == null) {
+        return 0;
+      }
+      return x.mainNum;
+    })
+    .map(x => x.toString(2).padStart(4, "0"))
+    .reduce((p, n) => p + n, "");
+  const val = BigInt("0b" + nums);
   return val.toString(36);
 };
 

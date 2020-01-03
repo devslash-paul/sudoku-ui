@@ -43,12 +43,16 @@ export const Line = ({
     />
   );
 
+  const midPointX = (startCoords[0] + endCoords[0]) / 2;
+  const midPointY = (startCoords[1] + endCoords[1]) / 2;
+  const rise = Math.abs(midPointY - endCoords[1]);
+  const run = Math.abs(midPointX - endCoords[0]);
+  const angle = -run / rise;
   return (
     <g>
       <path
-        d={`M ${startCoords[0]} ${startCoords[1]} L ${Math.round(
-          endCoords[0]
-        )} ${Math.round(endCoords[1])}`}
+        d={`M ${startCoords[0]} ${startCoords[1]} Q ${midPointX} ${midPointY}
+        ${endCoords[0]} ${endCoords[1]}`}
         fill="transparent"
         stroke="#0000ffaa"
         style={{ pointerEvents: "none" }}

@@ -1,5 +1,5 @@
 import React, { Dispatch, useState } from "react";
-import { AppState, CellState } from "../state/model";
+import { AppState, CellState, State } from "../state/model";
 import CSS from "csstype";
 import {
   insertCell,
@@ -14,6 +14,7 @@ import { Cell } from "./Cell";
 type BoardProps = {
   board: Array<CellState>;
   size: number;
+  interact: boolean;
   onEnterNum: (index: number, num: number) => void;
   onEnterSmallNum: (index: Array<number>, num: number) => void;
   onDelete: (index: number) => void;
@@ -60,7 +61,7 @@ const onInput = (
   props: BoardProps
 ) => {
   return (val: number, isMeta: boolean) => {
-    if(val === 46 || val === 8) {
+    if (val === 46 || val === 8) {
       return onDelete(index);
     }
     if ((val >= 49 && val <= 57) || (val >= 97 && val <= 105)) {
@@ -101,6 +102,7 @@ export const BoardUI = (props: BoardProps) => {
     width: `${props.size}px`,
     lineHeight: `${props.size}px`
   };
+  const { interact } = props;
   const defaultSelectedCell: Set<number> = new Set();
   const [selectedState, setSelected] = useState(defaultSelectedCell);
   const [highlightState, setHighlight] = useState<Highlight>(null);
@@ -108,17 +110,29 @@ export const BoardUI = (props: BoardProps) => {
   const board = props.board;
   let cells = board.map((cell, index) => {
     const onDrag = () => {
+      if (!interact) {
+        return;
+      }
       const res = new Set(selectedState);
       res.add(index);
       setSelected(res);
     };
     const onBlur = () => {
+      if (!interact) {
+        return;
+      }
       setHighlight(null);
     };
     const onClickText = (val: number) => {
+      if (!interact) {
+        return;
+      }
       setHighlight(val);
     };
     const select = (meta: boolean) => {
+      if (!interact) {
+        return;
+      }
       if (!meta) {
         const res: Set<number> = new Set();
         res.add(index);
@@ -162,7 +176,8 @@ export const BoardUI = (props: BoardProps) => {
 const mapStateToProps = (main: AppState) => {
   return {
     board: main.cells,
-    size: main.settings.boardSize
+    size: main.settings.boardSize,
+    interact: main.settings.state === State.NORMAL
   };
 };
 

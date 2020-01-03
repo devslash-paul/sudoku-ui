@@ -34,6 +34,7 @@ export class Cell extends Component<CellProps> {
       this.props.number !== nextProps.number ||
       this.props.selected !== nextProps.selected ||
       this.props.small !== nextProps.small ||
+      this.props.size !== nextProps.size ||
       this.props.highlight !== nextProps.highlight
     );
   }
