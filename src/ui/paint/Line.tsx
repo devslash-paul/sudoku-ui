@@ -1,4 +1,4 @@
-import { Link, Coordinate } from "../../state/model";
+import { Coordinate } from "../../state/model";
 import { toCoordinates } from "../size/sizer";
 import React from "react";
 
@@ -45,9 +45,9 @@ export const Line = ({
 
   const midPointX = (startCoords[0] + endCoords[0]) / 2;
   const midPointY = (startCoords[1] + endCoords[1]) / 2;
-  const rise = Math.abs(midPointY - endCoords[1]);
-  const run = Math.abs(midPointX - endCoords[0]);
-  const angle = -run / rise;
+  // const rise = Math.abs(midPointY - endCoords[1]);
+  // const run = Math.abs(midPointX - endCoords[0]);
+  // const angle = -run / rise;
   return (
     <g>
       <path

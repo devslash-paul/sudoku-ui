@@ -1,10 +1,5 @@
 import { AppState, State } from "./model";
-import {
-  PaintEvent,
-  Actions,
-  ClickTextEvent,
-  CoordinateEvent
-} from "./cellActions";
+import { PaintEvent, Actions, CoordinateEvent } from "./cellActions";
 import {
   BEGIN_PAINTING,
   PAINT,
@@ -59,19 +54,6 @@ function doSendCoordinate(state: AppState, action: CoordinateEvent) {
       ...state.paintState,
       links: [...state.paintState.links, link],
       paintStart: null
-    }
-  };
-}
-
-function doStartLine(state: AppState, action: ClickTextEvent) {
-  return {
-    ...state,
-    paintState: {
-      ...state.paintState,
-      paintStart: {
-        cell: action.index,
-        subcell: action.number - 1
-      }
     }
   };
 }

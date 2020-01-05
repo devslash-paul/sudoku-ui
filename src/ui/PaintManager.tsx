@@ -1,7 +1,7 @@
 import React from "react";
 import { Paint } from "./paint/Painter";
 import { connect } from "react-redux";
-import { AppState, State, Coordinate, Link } from "../state/model";
+import { AppState, State } from "../state/model";
 
 export type Paint = {
   cell: number;

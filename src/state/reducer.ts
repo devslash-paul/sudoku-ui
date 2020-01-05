@@ -160,24 +160,27 @@ function doInsertSmall(state: AppState, action: InsertSmallEvent) {
 }
 
 function doDelete(state: AppState, action: DeleteEvent) {
-  const index = action.index;
-  let deleteCell = state.cells[index];
-  const newDeleteCells = [...state.cells];
+  let iState = [...state.cells];
+  action.index.forEach(idx => {
+    let deleteCell = state.cells[idx];
+    const newDeleteCells = [...iState];
+    if (deleteCell.mainNum == null) {
+      deleteCell = {
+        ...deleteCell,
+        small: []
+      };
+    } else {
+      deleteCell = {
+        ...deleteCell,
+        mainNum: null
+      };
+    }
+    newDeleteCells[idx] = deleteCell;
+    iState = [...newDeleteCells];
+  });
 
-  if (deleteCell.mainNum == null) {
-    deleteCell = {
-      ...deleteCell,
-      small: []
-    };
-  } else {
-    deleteCell = {
-      ...deleteCell,
-      mainNum: null
-    };
-  }
-  newDeleteCells[index] = deleteCell;
   return {
     ...state,
-    cells: newDeleteCells
+    cells: iState
   };
 }

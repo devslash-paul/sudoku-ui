@@ -12,7 +12,19 @@ import {
 } from "../state/sidebarActions";
 import { Actions } from "../state/cellActions";
 import { BoardUI } from "./Board";
-import { Box } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
+import CreateIcon from "@material-ui/icons/Create";
+import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
+import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
+
+const cellStyle: CSS.Properties = {
+  height: "33px",
+  width: "33px",
+  border: "1px solid black",
+  lineHeight: "32px",
+  letterSpacing: "6px",
+  borderRadius: "3px"
+};
 
 type SidebarProps = {
   board: string;
@@ -40,20 +52,27 @@ const doExport = (addToast: any, board: string) => {
 };
 const Sidebar = (props: SidebarProps) => {
   const { addToast } = useToasts();
-  const boxStyle = { margin: "0px", borderRadius: "0" };
+  const boxStyle = {
+    margin: "0px",
+    borderRadius: "0",
+    flexGrow: 1,
+    borderBottom: "1px solid gray"
+  };
   const topLeft: CSS.Properties = {
-    borderTopLeftRadius: "10px"
+    borderTopLeftRadius: "10px",
+    borderRight: "1px solid gray"
   };
   const topRight: CSS.Properties = {
-    borderTopRightRadius: "10px"
+    borderTopRightRadius: "10px",
+    borderLeft: "1px solid gray"
   };
   const vfun = (e: any) => {};
 
   return (
     <div>
-      <h5>SudokuUI</h5>
-      <Box component="span">
+      <Grid container>
         <Button
+          disableElevation
           style={{ ...boxStyle, ...topLeft }}
           variant="contained"
           onClick={props.onNew}
@@ -61,6 +80,7 @@ const Sidebar = (props: SidebarProps) => {
           New
         </Button>
         <Button
+          disableElevation
           style={boxStyle}
           variant="contained"
           onClick={e => onImportClicked(props.doImport)}
@@ -68,14 +88,48 @@ const Sidebar = (props: SidebarProps) => {
           Import
         </Button>
         <Button
+          disableElevation
           style={{ ...boxStyle, ...topRight }}
           variant="contained"
           onClick={() => doExport(addToast, props.full)}
         >
           Share
         </Button>
-      </Box>
-      <h5>Settings</h5>
+      </Grid>
+      <Grid container>
+        <ToggleButtonGroup size="small" style={boxStyle}>
+          <ToggleButton size={"small"} selected={true} style={boxStyle}>
+            Enable Highlights
+          </ToggleButton>
+          <ToggleButton selected={false} style={boxStyle}>
+            Enable Highlights
+          </ToggleButton>
+        </ToggleButtonGroup>
+      </Grid>
+      <Grid>
+        <Button variant="contained">
+          <span style={cellStyle}>
+            <div>1</div>
+          </span>
+        </Button>
+        <Button variant="contained">
+          <span
+            style={{
+              ...cellStyle,
+              ...{
+                fontSize: "11px",
+                lineHeight: "11px",
+                display: "flex",
+                flexWrap: "wrap"
+              }
+            }}
+          >
+            <div style={{ flexBasis: "100%" }}>123</div>
+            <div style={{ flexBasis: "100%" }}>456</div>
+            <div style={{ flexBasis: "100%" }}>789</div>
+          </span>
+        </Button>
+      </Grid>
       <div>
         <label htmlFor="highlight">Enable Highlights</label>
         <input

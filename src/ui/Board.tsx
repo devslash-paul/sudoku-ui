@@ -17,7 +17,7 @@ type BoardProps = {
   interact: boolean;
   onEnterNum: (index: number, num: number) => void;
   onEnterSmallNum: (index: Array<number>, num: number) => void;
-  onDelete: (index: number) => void;
+  onDelete: (index: Set<number>) => void;
 };
 
 const onMove = (
@@ -57,12 +57,12 @@ const onInput = (
   index: number,
   selectedState: Set<number>,
   doMove: (d: Direction) => void,
-  onDelete: (idx: number) => void,
+  onDelete: (idx: Set<number>) => void,
   props: BoardProps
 ) => {
   return (val: number, isMeta: boolean) => {
     if (val === 46 || val === 8) {
-      return onDelete(index);
+      return onDelete(selectedState);
     }
     if ((val >= 49 && val <= 57) || (val >= 97 && val <= 105)) {
       // we have a number entered. Lets quickly normalize the numpad
@@ -70,13 +70,13 @@ const onInput = (
         val -= 48;
       }
       val -= 48;
-      if (!isMeta) {
+      if (!isMeta && selectedState.size === 1) {
         props.onEnterNum(selectedState.values().next().value, val);
-      } else {
+      } else if (isMeta) {
         props.onEnterSmallNum(Array.from(selectedState), val);
       }
     } else if (val === 8 || val === 46) {
-      return props.onDelete(index);
+      return onDelete(selectedState);
     }
     if (selectedState.size === 1) {
       if (val === 38) {
@@ -189,7 +189,7 @@ const mapDispatchToProps = (dispatch: Dispatch<Actions>) => {
     onEnterSmallNum: (index: Array<number>, num: number) => {
       dispatch(insertSmallCell(index, num));
     },
-    onDelete: (index: number) => {
+    onDelete: (index: Set<number>) => {
       dispatch(deleteCell(index));
     }
   };

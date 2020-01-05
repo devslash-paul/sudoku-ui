@@ -32,16 +32,16 @@ export type Actions =
   | PaintEvent;
 
 export type CoordinateEvent = {
-  type: typeof SEND_COORDINATE,
-  coordinate: Coordinate
-}
+  type: typeof SEND_COORDINATE;
+  coordinate: Coordinate;
+};
 
 export type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT";
 
 export type PaintEvent = {
-  type: typeof PAINT,
-  subtype: typeof BEGIN_PAINTING | typeof END_PAINTING
-}
+  type: typeof PAINT;
+  subtype: typeof BEGIN_PAINTING | typeof END_PAINTING;
+};
 export type ImportEvent = {
   type: typeof IMPORT;
   value: string;
@@ -81,20 +81,22 @@ export type InsertSmallEvent = {
 };
 export type InsertEvent = {
   type: typeof INSERT;
-  index: number,
+  index: number;
   number: number;
 };
 
 export type DeleteEvent = {
   type: typeof DELETE;
-  index: number;
+  index: Set<number>;
 };
-export type ResizeEvent = {
-  type: typeof RESIZE
-  size: number;
-} | {
-  type: typeof RESIZE_START | typeof RESIZE_END
-};
+export type ResizeEvent =
+  | {
+      type: typeof RESIZE;
+      size: number;
+    }
+  | {
+      type: typeof RESIZE_START | typeof RESIZE_END;
+    };
 
 export function resize(size: number): ResizeEvent {
   return {
@@ -122,7 +124,7 @@ export function insertSmallCell(
   };
 }
 
-export function deleteCell(index: number): DeleteEvent {
+export function deleteCell(index: Set<number>): DeleteEvent {
   return {
     type: DELETE,
     index
