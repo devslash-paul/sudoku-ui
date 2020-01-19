@@ -4,6 +4,7 @@ import CSS from "csstype";
 type CellProps = {
   number: number | null;
   small: Array<number>;
+  cells: number;
   selected: boolean;
   focused: boolean;
   highlight: number | null;
@@ -20,7 +21,6 @@ const style: CSS.Properties = {
   boxSizing: "border-box",
   textAlign: "center",
   background: "white",
-  flexBasis: "calc(100% /9)"
 };
 const highlightText: CSS.Properties = {
   color: "red",
@@ -47,12 +47,16 @@ export class Cell extends Component<CellProps> {
 
   render() {
     const ninth = this.props.size;
-    const extraStyle: React.CSSProperties = {
+    const extraStyle: CSS.Properties = {
       ...style,
+      flexBasis: "calc(100%/" + this.props.cells + ")",
       fontSize: `${ninth - 10}px`,
       height: `${ninth}px`,
       lineHeight: `${ninth}px`,
       position: "relative",
+      padding: '2px',
+      justifyItems: 'center',
+      alignItems: 'center',
       background: this.props.selected ? "rgba(0,0,255,0.2)" : "white"
     };
 
@@ -60,11 +64,19 @@ export class Cell extends Component<CellProps> {
       ? this.getLargeCell()
       : this.getSmallCell();
 
+    const tryStyle: CSS.Properties = {
+      ...extraStyle,
+      display: 'grid',
+      gridTemplateColumns: '33% 34% 33%',
+      gridTemplateRows: '33% 34% 33%',
+    }
+
     return (
       <div
         tabIndex={0}
+        style={tryStyle}
         className="tile"
-        style={extraStyle}
+
         onMouseDown={e => this.props.onClick(e.shiftKey)}
         onKeyDown={e => this.props.onInput(e.keyCode, e.shiftKey)}
         onMouseMove={this.onMouseover}
@@ -77,19 +89,14 @@ export class Cell extends Component<CellProps> {
 
   private getSmallCell() {
     return this.props.small.map(x => {
-      const pos = "absolute";
       const clickHandler = () => this.props.onClickText(x);
       const thirdSize = Math.floor(this.props.size / 4);
       let s: React.CSSProperties = {
-        position: pos,
         fontSize: `${thirdSize}px`,
         height: `${thirdSize}px`,
-        display: `inline-block`,
-        textAlign: `left`,
         lineHeight: `${thirdSize}px`,
-        left:
-          ((x - 1) % 3) * (this.props.size / 3) + (3 / 50) * this.props.size,
-        top: Math.floor((x - 1) / 3) * (this.props.size / 3)
+        gridRow: `${Math.floor((x-1)/3) + 1}`,
+        gridColumn: ((x-1)%3) + 1,
       };
       if (this.props.highlight === x) {
         s = {
@@ -113,8 +120,13 @@ export class Cell extends Component<CellProps> {
       this.props.number && this.props.onClickText(this.props.number);
     const highlight = this.props.highlight === this.props.number;
     const style = highlight ? highlightText : {};
+    const ex = {
+      ...style,
+      gridRow: '1/4',
+      gridColumn: '1/4',
+    }
     return (
-      <div className="content" onClick={clickHandler} style={style}>
+      <div className="content" onClick={clickHandler} style={ex}>
         {this.props.number}
       </div>
     );

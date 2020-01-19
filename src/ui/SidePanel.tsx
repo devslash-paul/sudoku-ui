@@ -13,17 +13,19 @@ import {
 import { Actions } from "../state/cellActions";
 import { BoardUI } from "./Board";
 import { Grid } from "@material-ui/core";
-import CreateIcon from "@material-ui/icons/Create";
-import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
+import { History } from './History';
 import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
+import { Cell } from "./Cell";
 
+const buttonWidth = 33;
 const cellStyle: CSS.Properties = {
-  height: "33px",
-  width: "33px",
+  boxSizing: 'border-box',
+  background: 'white',
+  height: buttonWidth + "px",
+  width: buttonWidth + "px",
   border: "1px solid black",
-  lineHeight: "32px",
-  letterSpacing: "6px",
-  borderRadius: "3px"
+  lineHeight: buttonWidth + "px",
+  fontSize: (buttonWidth / 1.2) + 'px',
 };
 
 type SidebarProps = {
@@ -67,6 +69,7 @@ const Sidebar = (props: SidebarProps) => {
     borderLeft: "1px solid gray"
   };
   const vfun = (e: any) => {};
+  const vof = () => {};
 
   return (
     <div>
@@ -107,27 +110,15 @@ const Sidebar = (props: SidebarProps) => {
         </ToggleButtonGroup>
       </Grid>
       <Grid>
-        <Button variant="contained">
+        <Button variant="contained" style={boxStyle} disableElevation>
           <span style={cellStyle}>
             <div>1</div>
           </span>
         </Button>
-        <Button variant="contained">
-          <span
-            style={{
-              ...cellStyle,
-              ...{
-                fontSize: "11px",
-                lineHeight: "11px",
-                display: "flex",
-                flexWrap: "wrap"
-              }
-            }}
-          >
-            <div style={{ flexBasis: "100%" }}>123</div>
-            <div style={{ flexBasis: "100%" }}>456</div>
-            <div style={{ flexBasis: "100%" }}>789</div>
-          </span>
+        <Button variant="contained" style={boxStyle} disableElevation>
+          <Cell number={null} small={[1,2,3,4,5,6,7,8,9]} selected={false} focused={false} size={buttonWidth}
+          cells={1}
+          highlight={null} onClick={vfun} onClickText={vfun} onBlur={vof} onMouseover={vof} onInput={vfun}/>
         </Button>
       </Grid>
       <div>
@@ -161,6 +152,8 @@ const Sidebar = (props: SidebarProps) => {
         onEnterSmallNum={vfun}
         onDelete={vfun}
       />
+      <h5>History</h5>
+      <History />
       <h5>External resources</h5>
       <a
         href={"https://www.sudokuwiki.org/sudoku.html?db=" + props.board}

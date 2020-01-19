@@ -9,6 +9,21 @@ export enum State {
     PAINTING=3
 }
 
+/**
+ * All events must be reversible, events that are supported are
+ * ADD of large number
+ * REMOVAL of large number
+ * ADDITION of small numbers (one by one)
+ * REMOVAL of small numbers (one by one)
+ * ADDITION of small numbers (in batch)
+ * REMOVAL of small numbers (in batch)
+ */
+export type AppEvent  ={
+    kind: 'ADD' | 'REMOVE',
+    large?: number,
+    small?: Array<number>,
+}
+
 export type Settings = {
     state: State,
     enableHighlight: boolean,
@@ -34,4 +49,5 @@ export type AppState = {
     cells: Array<CellState>,
     settings: Settings,
     paintState: PaintState,
+    history: Array<AppEvent>,
 }

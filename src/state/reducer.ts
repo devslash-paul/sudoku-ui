@@ -1,4 +1,4 @@
-import { AppState, State } from "./model";
+import { AppState, State, AppEvent } from "./model";
 import {
   Actions,
   InsertSmallEvent,
@@ -15,7 +15,10 @@ import {
   RESIZE,
   RESIZE_START,
   RESIZE_END,
-  PAINT
+  PAINT,
+  INSERT_SMALL,
+  INSERT,
+  DELETE
 } from "./actionTypes";
 import { paintReducer } from "./paint";
 
@@ -55,11 +58,11 @@ export function AppReducer(
     case RESIZE_START:
     case RESIZE_END:
       return doResize(state, action);
-    case "INSERT":
+    case INSERT:
       return doInsert(state, action.index, action.number);
-    case "INSERT_SMALL":
+    case INSERT_SMALL:
       return doInsertSmall(state, action);
-    case "DELETE":
+    case DELETE:
       return doDelete(state, action);
     case HIGHLIGHT_CHANGE:
       return doChangeHighlight(state, action.value);
@@ -97,7 +100,8 @@ function doInsert(state: AppState, idx: number, value: number): AppState {
   const newCells = [...state.cells];
   const cell = newCells[idx];
   newCells[idx] = { ...cell, mainNum: value };
-  return { ...state, cells: newCells };
+  const history: Array<AppEvent> = [...state.history, { kind: "ADD", large: value }]
+  return { ...state, cells: newCells, history };
 }
 
 function doImport(state: AppState, value: string): AppState {

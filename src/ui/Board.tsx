@@ -148,6 +148,7 @@ export const BoardUI = (props: BoardProps) => {
         key={index}
         number={cell.mainNum}
         small={cell.small}
+        cells={9}
         size={props.size / 9}
         highlight={highlightState}
         selected={selectedState.has(index)}

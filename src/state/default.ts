@@ -15,6 +15,7 @@ export const getInitialState = () => {
 }
 
 const defaultState: AppState = {
+  history: [],
   paintState: {
     links: [],
     paintStart: null,
