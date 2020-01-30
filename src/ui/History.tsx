@@ -4,7 +4,7 @@ import { AppState } from "../state/model";
 
 const mapStateToProps = (state: AppState) => {
     return {
-        events: []
+        events: [...state.history].reverse()
     }
 }
 

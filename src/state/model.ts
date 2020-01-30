@@ -20,6 +20,7 @@ export enum State {
  */
 export type AppEvent  ={
     kind: 'ADD' | 'REMOVE',
+    index: Array<number>,
     large?: number,
     small?: Array<number>,
 }

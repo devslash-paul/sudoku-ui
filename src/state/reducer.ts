@@ -21,6 +21,7 @@ import {
   DELETE
 } from "./actionTypes";
 import { paintReducer } from "./paint";
+import { collapseHistory } from "./history";
 
 const validStateAction = (state: State, action: Actions) => {
   switch (state) {
@@ -100,7 +101,7 @@ function doInsert(state: AppState, idx: number, value: number): AppState {
   const newCells = [...state.cells];
   const cell = newCells[idx];
   newCells[idx] = { ...cell, mainNum: value };
-  const history: Array<AppEvent> = [...state.history, { kind: "ADD", large: value }]
+  const history: Array<AppEvent> = [...state.history, { kind: "ADD", large: value, index: [idx] }]
   return { ...state, cells: newCells, history };
 }
 
@@ -135,12 +136,13 @@ function doSidebar(state: AppState, action: SidebarEvent): AppState {
       const newCells = new Array(81).fill({ mainNum: null, small: [] });
       return {
         ...state,
-        cells: newCells
+        cells: newCells,
+        history: []
       };
   }
 }
 
-function doInsertSmall(state: AppState, action: InsertSmallEvent) {
+function doInsertSmall(state: AppState, action: InsertSmallEvent) : AppState {
   const cells = [...state.cells];
   const adding = action.index
     .map(x => cells[x].small.indexOf(action.number) === -1)
@@ -160,20 +162,34 @@ function doInsertSmall(state: AppState, action: InsertSmallEvent) {
       };
     }
   });
-  return { ...state, cells: [...cells] };
+  const hist: Array<AppEvent> = action.index.map(i => {
+    return {
+      kind: adding ? "ADD": "REMOVE",
+      index: [i],
+      small: [action.number]
+    }
+  })
+  return {
+    ...state, 
+    cells: [...cells],
+    history: [...state.history, ...collapseHistory(hist)] 
+  };
 }
 
 function doDelete(state: AppState, action: DeleteEvent) {
   let iState = [...state.cells];
+  let historyItem: Array<AppEvent> = [];
   action.index.forEach(idx => {
     let deleteCell = state.cells[idx];
     const newDeleteCells = [...iState];
     if (deleteCell.mainNum == null) {
+      historyItem.push({kind: "REMOVE", index: [idx], small: deleteCell.small})
       deleteCell = {
         ...deleteCell,
         small: []
       };
     } else {
+      historyItem.push({kind: "REMOVE", index: [idx], large: deleteCell.mainNum})
       deleteCell = {
         ...deleteCell,
         mainNum: null
@@ -182,9 +198,11 @@ function doDelete(state: AppState, action: DeleteEvent) {
     newDeleteCells[idx] = deleteCell;
     iState = [...newDeleteCells];
   });
+  const history: Array<AppEvent> = [...state.history, ...collapseHistory(historyItem)]
 
   return {
     ...state,
-    cells: iState
+    cells: iState,
+    history,
   };
 }
