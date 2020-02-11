@@ -1,6 +1,19 @@
-import { AppState, State } from "./model";
+import { AppState, State, CellState } from "./model";
+import { importFull } from "../transit";
 
 export const getInitialState = () => {
+  if(window.location.pathname.startsWith("/share/")) {
+    let path = window.location.pathname.substring("/share/".length)
+    window.history.pushState({}, "Sudoku UI", "/")
+    return {
+      ...defaultState, 
+      settings: {
+        ...defaultState.settings, 
+        frozen: false,
+      },
+      cells: importFull(path)
+    }
+  }
   const res =localStorage.getItem('state');
   if (res != null) {
     return JSON.parse(res);

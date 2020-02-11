@@ -28,3 +28,23 @@ export const collapseHistory = (events: Array<AppEvent>) => {
     }
     return res;
 }
+
+export const collapseUndo = (events: Array<AppEvent>) => {
+    // this can only happen on the last two
+    if (events.length < 2) {
+        return events;
+    }
+
+    var last = events[events.length - 1]
+    var snd = events[events.length - 2]
+
+    if ((last.kind === "ADD" && snd.kind === "REMOVE") ||
+        (last.kind === "REMOVE" && snd.kind === "ADD")) {
+        if (last.large == snd.large && JSON.stringify(last.small) == JSON.stringify(snd.small)
+            && JSON.stringify(last.index) === JSON.stringify(snd.index)) {
+            // they're an undo of the other
+            return events.slice(0, events.length - 2)
+        }
+    }
+    return events
+}

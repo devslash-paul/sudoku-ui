@@ -16,7 +16,8 @@ import {
   RESIZE_END,
   BEGIN_PAINTING,
   END_PAINTING,
-  SEND_COORDINATE
+  SEND_COORDINATE,
+  CLEAR_HISTORY
 } from "./actionTypes";
 import { Coordinate } from "./model";
 
@@ -29,7 +30,8 @@ export type Actions =
   | HighlightChangeEvent
   | ImportEvent
   | CoordinateEvent
-  | PaintEvent;
+  | PaintEvent
+  | ClearHistoryEvent;
 
 export type CoordinateEvent = {
   type: typeof SEND_COORDINATE;
@@ -46,6 +48,9 @@ export type ImportEvent = {
   type: typeof IMPORT;
   value: string;
 };
+export type ClearHistoryEvent = {
+  type: typeof CLEAR_HISTORY;
+}
 export type SidebarEvent = {
   type: typeof SIDEBAR;
   subtype: typeof NEW;

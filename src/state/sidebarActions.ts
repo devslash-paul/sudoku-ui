@@ -1,5 +1,5 @@
-import { SidebarEvent, HighlightChangeEvent, ImportEvent, PaintEvent } from "./cellActions";
-import { SIDEBAR, NEW, HIGHLIGHT_CHANGE, IMPORT, BEGIN_PAINTING, END_PAINTING, PAINT } from "./actionTypes";
+import { SidebarEvent, HighlightChangeEvent, ImportEvent, PaintEvent, ClearHistoryEvent } from "./cellActions";
+import { SIDEBAR, NEW, HIGHLIGHT_CHANGE, IMPORT, BEGIN_PAINTING, END_PAINTING, PAINT, CLEAR_HISTORY } from "./actionTypes";
 
 export function onNew() :SidebarEvent{
     return {
@@ -26,5 +26,10 @@ export function onChangePainting(value: boolean): PaintEvent {
     return {
         type: PAINT,
         subtype: value ? BEGIN_PAINTING: END_PAINTING,
+    }
+}
+export function clearEvents(): ClearHistoryEvent {
+    return {
+        type: CLEAR_HISTORY,
     }
 }

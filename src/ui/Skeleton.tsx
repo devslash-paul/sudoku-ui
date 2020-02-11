@@ -19,8 +19,8 @@ const boardStyle: CSS.Properties = {
 const sidebarStyle = {
   background: "rgb(170, 170, 170)",
   padding: "20px",
-  width: "20%",
-  minWidth: "250px"
+  width: "22%",
+  minWidth: "270px"
 };
 
 export class Skeleton extends React.PureComponent<SkeletonProps> {

@@ -5,6 +5,8 @@ export const DELETE = "DELETE";
 export const DRAG_CELL = "DRAG_CELL";
 export const BLUR_CELL = "BLUR_CELL";
 
+export const CLEAR_HISTORY = "CLEAR_HISTORY";
+
 export const MOVE = "MOVE";
 
 export const CLICK_TEXT = "CLICK_TEXT";

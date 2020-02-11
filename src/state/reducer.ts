@@ -18,10 +18,11 @@ import {
   PAINT,
   INSERT_SMALL,
   INSERT,
-  DELETE
+  DELETE,
+  CLEAR_HISTORY
 } from "./actionTypes";
 import { paintReducer } from "./paint";
-import { collapseHistory } from "./history";
+import { collapseHistory, collapseUndo } from "./history";
 
 const validStateAction = (state: State, action: Actions) => {
   switch (state) {
@@ -71,8 +72,17 @@ export function AppReducer(
       return doSidebar(state, action);
     case IMPORT:
       return doImport(state, action.value);
+    case CLEAR_HISTORY: 
+      return doClearHistory(state);
     default:
       return state;
+  }
+}
+
+function doClearHistory(state: AppState) : AppState {
+  return {
+    ...state,
+    history: []
   }
 }
 
@@ -100,6 +110,12 @@ function doInsert(state: AppState, idx: number, value: number): AppState {
   // only works with a single selection
   const newCells = [...state.cells];
   const cell = newCells[idx];
+
+  if(cell.mainNum === value) {
+    // no op
+    return state;
+  }
+
   newCells[idx] = { ...cell, mainNum: value };
   const history: Array<AppEvent> = [...state.history, { kind: "ADD", large: value, index: [idx] }]
   return { ...state, cells: newCells, history };
@@ -144,11 +160,12 @@ function doSidebar(state: AppState, action: SidebarEvent): AppState {
 
 function doInsertSmall(state: AppState, action: InsertSmallEvent) : AppState {
   const cells = [...state.cells];
-  const adding = action.index
+  const validIdx = action.index.filter(x => cells[x].mainNum == null)
+  const adding = validIdx
     .map(x => cells[x].small.indexOf(action.number) === -1)
     .reduce((p, n) => p || n, false);
 
-  action.index.forEach(index => {
+  validIdx.forEach(index => {
     const alreadyHas = cells[index].small.indexOf(action.number) !== -1;
     if (adding && !alreadyHas) {
       cells[index] = {
@@ -162,7 +179,7 @@ function doInsertSmall(state: AppState, action: InsertSmallEvent) : AppState {
       };
     }
   });
-  const hist: Array<AppEvent> = action.index.map(i => {
+  const hist: Array<AppEvent> = validIdx.map(i => {
     return {
       kind: adding ? "ADD": "REMOVE",
       index: [i],
@@ -172,7 +189,7 @@ function doInsertSmall(state: AppState, action: InsertSmallEvent) : AppState {
   return {
     ...state, 
     cells: [...cells],
-    history: [...state.history, ...collapseHistory(hist)] 
+    history: collapseUndo([...state.history, ...collapseHistory(hist)])
   };
 }
 
@@ -198,7 +215,7 @@ function doDelete(state: AppState, action: DeleteEvent) {
     newDeleteCells[idx] = deleteCell;
     iState = [...newDeleteCells];
   });
-  const history: Array<AppEvent> = [...state.history, ...collapseHistory(historyItem)]
+  const history: Array<AppEvent> = collapseUndo([...state.history, ...collapseHistory(historyItem)])
 
   return {
     ...state,

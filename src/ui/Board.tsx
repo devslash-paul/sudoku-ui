@@ -60,9 +60,12 @@ const onInput = (
   onDelete: (idx: Set<number>) => void,
   props: BoardProps
 ) => {
-  return (val: number, isMeta: boolean) => {
+  return (val: number, shift: boolean, meta: boolean) => {
     if (val === 46 || val === 8) {
       return onDelete(selectedState);
+    }
+    if(meta) {
+      return;
     }
     if ((val >= 49 && val <= 57) || (val >= 97 && val <= 105)) {
       // we have a number entered. Lets quickly normalize the numpad
@@ -70,9 +73,9 @@ const onInput = (
         val -= 48;
       }
       val -= 48;
-      if (!isMeta && selectedState.size === 1) {
+      if (!shift && selectedState.size === 1) {
         props.onEnterNum(selectedState.values().next().value, val);
-      } else if (isMeta) {
+      } else if (shift) {
         props.onEnterSmallNum(Array.from(selectedState), val);
       }
     } else if (val === 8 || val === 46) {

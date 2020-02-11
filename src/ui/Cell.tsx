@@ -11,7 +11,7 @@ type CellProps = {
   size: number;
   onClick: (meta: boolean) => void;
   onClickText: (number: number) => void;
-  onInput: (arg0: number, meta: boolean) => void;
+  onInput: (arg0: number, shift: boolean, meta: boolean) => void;
   onBlur: () => void;
   onMouseover: () => void;
 };
@@ -78,7 +78,7 @@ export class Cell extends Component<CellProps> {
         className="tile"
 
         onMouseDown={e => this.props.onClick(e.shiftKey)}
-        onKeyDown={e => this.props.onInput(e.keyCode, e.shiftKey)}
+        onKeyDown={e => this.props.onInput(e.keyCode, e.shiftKey, e.metaKey)}
         onMouseMove={this.onMouseover}
         onBlur={this.props.onBlur}
       >
