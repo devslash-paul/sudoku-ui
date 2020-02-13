@@ -82,7 +82,10 @@ export function AppReducer(
 function doClearHistory(state: AppState) : AppState {
   return {
     ...state,
-    history: []
+    history: {
+      items: [],
+      activeItem: -1
+    }
   }
 }
 
@@ -117,8 +120,11 @@ function doInsert(state: AppState, idx: number, value: number): AppState {
   }
 
   newCells[idx] = { ...cell, mainNum: value };
-  const history: Array<AppEvent> = [...state.history, { kind: "ADD", large: value, index: [idx] }]
-  return { ...state, cells: newCells, history };
+  const history: Array<AppEvent> = [...state.history.items, { kind: "ADD", large: value, index: [idx] }]
+  return { ...state, cells: newCells, history: {
+    items: history,
+    activeItem: history.length - 1
+  } };
 }
 
 function doImport(state: AppState, value: string): AppState {
@@ -153,7 +159,7 @@ function doSidebar(state: AppState, action: SidebarEvent): AppState {
       return {
         ...state,
         cells: newCells,
-        history: []
+        history: {items: [], activeItem: -1}
       };
   }
 }
@@ -186,10 +192,14 @@ function doInsertSmall(state: AppState, action: InsertSmallEvent) : AppState {
       small: [action.number]
     }
   })
+  const history = [...state.history.items, ...collapseHistory(hist)];
   return {
     ...state, 
     cells: [...cells],
-    history: collapseUndo([...state.history, ...collapseHistory(hist)])
+    history: {
+      items: history,
+      activeItem: history.length - 1,
+    }
   };
 }
 
@@ -215,11 +225,15 @@ function doDelete(state: AppState, action: DeleteEvent) {
     newDeleteCells[idx] = deleteCell;
     iState = [...newDeleteCells];
   });
-  const history: Array<AppEvent> = collapseUndo([...state.history, ...collapseHistory(historyItem)])
+  const historyItems: Array<AppEvent> = [...state.history.items, ...collapseHistory(historyItem)]
 
   return {
     ...state,
     cells: iState,
-    history,
+    history: {
+      ...state.history,
+      items: historyItems,
+      activeItem: historyItems.length - 1
+    },
   };
 }

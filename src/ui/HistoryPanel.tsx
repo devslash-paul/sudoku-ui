@@ -5,8 +5,6 @@ import AddCircleIcon from '@material-ui/icons/AddCircle';
 import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
 import { AppEvent } from '../state/model'
 import CSS from 'csstype';
-import { createSelector } from 'reselect';
-
 
 export type HistoryPanelProps = {
     events: Array<AppEvent>
@@ -84,9 +82,6 @@ const EventItem = ({ item, style }: { item: AppEvent, style: CSSProperties }) =>
 }
 
 export const HistoryPanel = (props: HistoryPanelProps) => {
-    // const items = props.events.map((x, i) => {
-    //     return <EventItem key={i} item={x} />
-    // })
     const Row = ({ index, style }: {index: number, style: CSSProperties}) => (
         <EventItem style={style} item={props.events[index]} />
     );

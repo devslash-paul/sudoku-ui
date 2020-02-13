@@ -46,9 +46,14 @@ export type PaintState = {
     paintStart: Coordinate | null,
 }
 
+export type History = {
+    items: Array<AppEvent>,
+    activeItem: number,
+}
+
 export type AppState = {
     cells: Array<CellState>,
     settings: Settings,
     paintState: PaintState,
-    history: Array<AppEvent>,
+    history: History,
 }
