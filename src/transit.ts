@@ -38,30 +38,18 @@ const sparseMap: Record<number, string> = {
 }
 
 export function encodeFull(cells: CellState[]) {
-    const nums = cells
-        .map(x => {
-            if (x.mainNum == null) {
-                return 0;
-            }
-            return x.mainNum;
-        })
-        .map(x => reverse["" + x])
-        .reduce((p, n) => p + n, "");
-
-    const val = BigInt("0b" + nums);
-
     // algo 2 start
     const cellsFilled = cells.map(x => x.mainNum == null ? 0 : 1)
     let runThrough = "";
     let i = 0;
     while (i < cellsFilled.length) {
         // if this is a one, add it
-        if (cellsFilled[i] == 1) {
+        if (cellsFilled[i] === 1) {
             runThrough += sparseMap[0]
             i++;
         } else {
             // how many zeros in a row
-            if (cellsFilled.indexOf(1, i) == -1) {
+            if (cellsFilled.indexOf(1, i) === -1) {
                 // there are no more cells filled. Pick the largest possible
                 let nextOne = Math.min(7, cellsFilled.length - i)
                 runThrough += sparseMap[nextOne]
@@ -97,7 +85,7 @@ function bnToB64(bn: BigInt) {
     }
     var b64encoded = btoa(String.fromCharCode.apply(null, arr.map(x => parseInt(x, 2))));
 
-    return b64encoded.replace(/\//g, "-").replace(/\+/g, "_").replace(/\=/g, "")
+    return b64encoded.replace(/\//g, "-").replace(/\+/g, "_").replace(/=/g, "")
 }
 
 export function importFull(board: string): CellState[] {

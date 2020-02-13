@@ -1,4 +1,4 @@
-import { AppState, State, CellState } from "./model";
+import { AppState, State } from "./model";
 import { importFull } from "../transit";
 
 export const getInitialState = () => {

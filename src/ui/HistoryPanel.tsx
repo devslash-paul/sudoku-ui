@@ -13,7 +13,9 @@ export type HistoryPanelProps = {
 const containerStyle: CSS.Properties = {
     height: '145px',
     overflowY: 'scroll',
+    overflowX: 'hidden',
     background: 'white',
+    boxSizing: 'border-box',
 }
 
 function convert(num: number[]) {
@@ -29,14 +31,14 @@ function convert(num: number[]) {
         cols.add(col)
         res.push(`r${row}c${col}`)
     })
-    if (rows.size == 1) {
+    if (rows.size === 1) {
         // we only added to one row
         const arr = Array.from(cols.values())
             .map(x => "" + x)
             .reduce((p, n) => p + n, "")
         return `r${rows.values().next().value}c${arr}`
     }
-    else if (cols.size == 1) {
+    else if (cols.size === 1) {
         // we only added to one row
         const arr = Array.from(rows.values())
             .map(x => "" + x)
@@ -55,6 +57,7 @@ const createMessage = (item: AppEvent) => {
             if (item.small) {
                 return <><AddCircleIcon /> {item.small} as pencil marks to cell {convert(item.index)}</>
             }
+            break;
         case 'REMOVE':
             if (item.large) {
                 return <><RemoveCircleIcon /> {item.large} to cell {convert(item.index)}</>
@@ -74,6 +77,7 @@ const EventItem = ({ item, style }: { item: AppEvent, style: CSSProperties }) =>
         paddingRight: '5px',
         paddingLeft: '2px',
         borderRadius: '2px',
+        boxSizing: 'border-box',
     }
     return <div style={{...def, ...style}}>
         {message}

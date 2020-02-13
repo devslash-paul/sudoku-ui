@@ -3,7 +3,7 @@ import { AppEvent } from "./model";
 export const collapseHistory = (events: Array<AppEvent>) => {
     let last: AppEvent | null = null;
     let res: Array<AppEvent> = [];
-    if (events.length == 0) {
+    if (events.length === 0) {
         return [];
     }
 
@@ -40,7 +40,7 @@ export const collapseUndo = (events: Array<AppEvent>) => {
 
     if ((last.kind === "ADD" && snd.kind === "REMOVE") ||
         (last.kind === "REMOVE" && snd.kind === "ADD")) {
-        if (last.large == snd.large && JSON.stringify(last.small) == JSON.stringify(snd.small)
+        if (last.large === snd.large && JSON.stringify(last.small) === JSON.stringify(snd.small)
             && JSON.stringify(last.index) === JSON.stringify(snd.index)) {
             // they're an undo of the other
             return events.slice(0, events.length - 2)

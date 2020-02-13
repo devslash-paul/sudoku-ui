@@ -1,13 +1,9 @@
 import React, { Dispatch } from "react";
 import LayersClearIcon from '@material-ui/icons/LayersClear';
 import { connect } from "react-redux";
-import { AppState, CellState, Settings, State } from "../state/model";
+import { AppState, CellState } from "../state/model";
 import Button from "@material-ui/core/Button";
 import {
-  onNew,
-  onSetHighlight,
-  onImport,
-  onChangePainting,
   clearEvents
 } from "../state/sidebarActions";
 import { Actions } from "../state/cellActions";

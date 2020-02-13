@@ -22,7 +22,7 @@ import {
   CLEAR_HISTORY
 } from "./actionTypes";
 import { paintReducer } from "./paint";
-import { collapseHistory, collapseUndo } from "./history";
+import { collapseHistory } from "./history";
 
 const validStateAction = (state: State, action: Actions) => {
   switch (state) {
